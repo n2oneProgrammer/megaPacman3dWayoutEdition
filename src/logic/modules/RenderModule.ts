@@ -11,31 +11,47 @@ export default class RenderModule extends Module {
     private Vmatrix: WebGLUniformLocation | null = null;
     private Mmatrix: WebGLUniformLocation | null = null;
     private index_buffer: WebGLBuffer | null = null;
+    private shaderProgram: WebGLProgram | null = null;
+    private vertex_buffer: WebGLBuffer | null = null;
+    private color_buffer: WebGLBuffer | null = null;
 
     constructor() {
         super(100);
         this.vertices = [
-            -1, -1, -1, 1, -1, -1, 1, 1, -1, -1, 1, -1,
-            -1, -1, 1, 1, -1, 1, 1, 1, 1, -1, 1, 1,
-            -1, -1, -1, -1, 1, -1, -1, 1, 1, -1, -1, 1,
-            1, -1, -1, 1, 1, -1, 1, 1, 1, 1, -1, 1,
-            -1, -1, -1, -1, -1, 1, 1, -1, 1, 1, -1, -1,
-            -1, 1, -1, -1, 1, 1, 1, 1, 1, 1, 1, -1,
+            1,1,1, // 0
+            1,1,-1, // 1
+            -1,1,-1, // 2
+            -1,1,1, //3
+            1,-1,1, //4
+            1,-1,-1, //5
+            -1,-1,-1, // 6
+            -1,-1,1 //7
         ];
 
         this.colors = [
-            5, 3, 7, 5, 3, 7, 5, 3, 7, 5, 3, 7,
-            1, 1, 3, 1, 1, 3, 1, 1, 3, 1, 1, 3,
-            0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1,
-            1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0, 0,
-            1, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1, 0,
-            0, 1, 0, 0, 1, 0, 0, 1, 0, 0, 1, 0
+            0,0,0,
+            1,0,0,
+            0,1,0,
+            0,0,1,
+            1,1,0,
+            1,0,1,
+            0,1,1,
+            1,1,1,
         ];
 
         this.indices = [
-            0, 1, 2, 0, 2, 3, 4, 5, 6, 4, 6, 7,
-            8, 9, 10, 8, 10, 11, 12, 13, 14, 12, 14, 15,
-            16, 17, 18, 16, 18, 19, 20, 21, 22, 20, 22, 23
+            0,1,2,
+            0,3,2,
+            1,5,6,
+            1,2,6,
+            3,2,6,
+            3,7,6,
+            4,0,1,
+            4,5,1,
+            4,0,3,
+            4,7,3,
+            4,5,6,
+            4,7,6
         ];
         this.init();
 
@@ -46,13 +62,13 @@ export default class RenderModule extends Module {
         if (!gl) return;
 
         // Create and store data into vertex buffer
-        var vertex_buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
+        this.vertex_buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertex_buffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
 
         // Create and store data into color buffer
-        var color_buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
+        this.color_buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.color_buffer);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.colors), gl.STATIC_DRAW);
 
         // Create and store data into index buffer
@@ -90,29 +106,11 @@ export default class RenderModule extends Module {
         gl.shaderSource(fragShader, fragCode);
         gl.compileShader(fragShader);
 
-        var shaderProgram = gl.createProgram();
-        if (!shaderProgram) return;
-        gl.attachShader(shaderProgram, vertShader);
-        gl.attachShader(shaderProgram, fragShader);
-        gl.linkProgram(shaderProgram);
-
-        this.Pmatrix = gl.getUniformLocation(shaderProgram, "Pmatrix");
-        this.Vmatrix = gl.getUniformLocation(shaderProgram, "Vmatrix");
-        this.Mmatrix = gl.getUniformLocation(shaderProgram, "Mmatrix");
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, vertex_buffer);
-        var position = gl.getAttribLocation(shaderProgram, "position");
-        gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
-
-        // Position
-        gl.enableVertexAttribArray(position);
-        gl.bindBuffer(gl.ARRAY_BUFFER, color_buffer);
-        var color = gl.getAttribLocation(shaderProgram, "color");
-        gl.vertexAttribPointer(color, 3, gl.FLOAT, false, 0, 0);
-
-        // Color
-        gl.enableVertexAttribArray(color);
-        gl.useProgram(shaderProgram);
+        this.shaderProgram = gl.createProgram();
+        if (!this.shaderProgram) return;
+        gl.attachShader(this.shaderProgram, vertShader);
+        gl.attachShader(this.shaderProgram, fragShader);
+        gl.linkProgram(this.shaderProgram);
     }
 
     bind() {
@@ -124,6 +122,7 @@ export default class RenderModule extends Module {
         if (!owner) return;
         let canvas = CanvasController.instance;
         if (!canvas) return;
+        if (!this.shaderProgram) return;
         let gl = canvas.canvasCtx;
         const modelMatrix = mat4.create();
         mat4.fromRotationTranslationScale(modelMatrix, owner.rotation, owner.position, owner.scale);
@@ -131,7 +130,23 @@ export default class RenderModule extends Module {
         if (!cam) return;
         let m = mat4.create();
         mat4.invert(m, cam.getViewMatrix());
+        this.Pmatrix = gl.getUniformLocation(this.shaderProgram, "Pmatrix");
+        this.Vmatrix = gl.getUniformLocation(this.shaderProgram, "Vmatrix");
+        this.Mmatrix = gl.getUniformLocation(this.shaderProgram, "Mmatrix");
 
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.vertex_buffer);
+        var position = gl.getAttribLocation(this.shaderProgram, "position");
+        gl.vertexAttribPointer(position, 3, gl.FLOAT, false, 0, 0);
+
+        // Position
+        gl.enableVertexAttribArray(position);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.color_buffer);
+        var color = gl.getAttribLocation(this.shaderProgram, "color");
+        gl.vertexAttribPointer(color, 3, gl.FLOAT, false, 0, 0);
+
+        // Color
+        gl.enableVertexAttribArray(color);
+        gl.useProgram(this.shaderProgram);
 
 
         gl.uniformMatrix4fv(this.Pmatrix, false, cam.perspective);
