@@ -2,11 +2,15 @@ import Module from "../Module";
 import CanvasController from "../CanvasController";
 import {mat4} from "gl-matrix";
 import Scene from "../Scene";
+import Mesh from "../meshes/Mesh";
+import Texture from "../Textures/Texture";
+
+export interface IRenderModule {
+    mesh: Mesh;
+    texture: Texture;
+}
 
 export default class RenderModule extends Module {
-    private vertices: number[];
-    private colors: number[];
-    private indices: number[];
     private Pmatrix: WebGLUniformLocation | null = null;
     private Vmatrix: WebGLUniformLocation | null = null;
     private Mmatrix: WebGLUniformLocation | null = null;
@@ -14,45 +18,14 @@ export default class RenderModule extends Module {
     private shaderProgram: WebGLProgram | null = null;
     private vertex_buffer: WebGLBuffer | null = null;
     private color_buffer: WebGLBuffer | null = null;
+    private mesh: Mesh;
+    private texture: Texture;
 
-    constructor() {
+    constructor({mesh, texture}: IRenderModule) {
         super(100);
-        this.vertices = [
-            1,1,1, // 0
-            1,1,-1, // 1
-            -1,1,-1, // 2
-            -1,1,1, //3
-            1,-1,1, //4
-            1,-1,-1, //5
-            -1,-1,-1, // 6
-            -1,-1,1 //7
-        ];
-
-        this.colors = [
-            0,0,0,
-            1,0,0,
-            0,1,0,
-            0,0,1,
-            1,1,0,
-            1,0,1,
-            0,1,1,
-            1,1,1,
-        ];
-
-        this.indices = [
-            0,1,2,
-            0,3,2,
-            1,5,6,
-            1,2,6,
-            3,2,6,
-            3,7,6,
-            4,0,1,
-            4,5,1,
-            4,0,3,
-            4,7,3,
-            4,5,6,
-            4,7,6
-        ];
+        this.mesh = mesh;
+        this.texture = texture;
+        this.texture.calculatingColor(this.mesh.vertices);
         this.init();
 
     }
@@ -64,17 +37,17 @@ export default class RenderModule extends Module {
         // Create and store data into vertex buffer
         this.vertex_buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.vertex_buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.mesh.vertices), gl.STATIC_DRAW);
 
         // Create and store data into color buffer
         this.color_buffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.color_buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.colors), gl.STATIC_DRAW);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.texture.colorVertices), gl.STATIC_DRAW);
 
         // Create and store data into index buffer
         this.index_buffer = gl.createBuffer();
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.index_buffer);
-        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
+        gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.mesh.triangles), gl.STATIC_DRAW);
 
         /*=================== Shaders =========================*/
 
@@ -153,7 +126,7 @@ export default class RenderModule extends Module {
         gl.uniformMatrix4fv(this.Vmatrix, false, m);
         gl.uniformMatrix4fv(this.Mmatrix, false, modelMatrix);
         gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, this.index_buffer);
-        gl.drawElements(gl.TRIANGLES, this.indices.length, gl.UNSIGNED_SHORT, 0);
+        gl.drawElements(gl.TRIANGLES, this.mesh.triangles.length, gl.UNSIGNED_SHORT, 0);
 
     }
 
