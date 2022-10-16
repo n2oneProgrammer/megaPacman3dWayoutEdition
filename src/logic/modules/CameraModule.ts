@@ -38,10 +38,10 @@ export default class CameraModule extends Module {
         if (!owner) return result;
         let rot = quat.create();
         // let trans = vec3.create();
-        quat.invert(rot, owner.rotation);
-        // vec3.invert(trans, owner.position);
-        mat4.fromRotationTranslation(result, rot, owner.position);
-        // mat4.invert(result, result);
+        let rot2 = owner.getQuaternionRotation();
+
+        quat.invert(rot, rot2);
+        mat4.fromRotationTranslation(result, owner.getQuaternionRotation(), owner.position);
         return result;
     }
 

@@ -9,16 +9,14 @@ export interface IModel {
 
 export default class Model {
     position: vec3;
-    rotation: quat;
+    rotation: vec3;
     scale: vec3;
     private readonly _modules: Module[];
 
     constructor({position, rotation, scale}: IModel) {
         this._modules = [];
         this.position = position || [0, 0, 0];
-        let rot = rotation || [0, 0, 0];
-        this.rotation = quat.create();
-        quat.fromEuler(this.rotation, rot[0], rot[1], rot[2]);
+        this.rotation = rotation || [0, 0, 0];
         this.scale = scale || [1, 1, 1];
         console.log(this);
     }
@@ -36,5 +34,11 @@ export default class Model {
 
     get modules(): Module[] {
         return this._modules;
+    }
+
+    getQuaternionRotation(): quat {
+        const rotQuaternion = quat.create();
+        quat.fromEuler(rotQuaternion, this.rotation[0], this.rotation[1] + 180, this.rotation[2])
+        return rotQuaternion
     }
 }
