@@ -1,6 +1,7 @@
 import CanvasController from "./CanvasController.js";
 import Model from "./Model.js";
 import CameraModule from "./modules/CameraModule";
+import InputService from "./services/InputService";
 
 export default class Scene {
     private static _instance: Scene;
@@ -13,6 +14,7 @@ export default class Scene {
 
     constructor(canvasController: CanvasController) {
         Scene._instance = this;
+        InputService.instance;
         this.canvasController = canvasController;
         this.isRunning = false;
         this.lastTime = -1;
