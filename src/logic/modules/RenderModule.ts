@@ -68,8 +68,8 @@ export default class RenderModule extends Module {
             'gl_Position = Pmatrix*Vmatrix*Mmatrix*vec4(position, 1.);' +
             'vColor = color;' +
             'highp vec3 ambientLight = vec3(0.3, 0.3,0.3);' +
-            'highp vec3 directionalLightColor = vec3(0.5, 0.4, 0.4);' +
-            'highp vec3 directionalVector = normalize(vec3(-0.75, 1, 2));' +
+            'highp vec3 directionalLightColor = vec3(1, 0.2, 0.2);' +
+            'highp vec3 directionalVector = normalize(vec3(10, 5, -5));' +
             'highp vec4 transformedNormal = uNormalMatrix * vec4(normal, 1.0);' +
             'highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);' +
             'vLighting = ambientLight + (directionalLightColor * directional);' +
@@ -112,7 +112,7 @@ export default class RenderModule extends Module {
         let m = mat4.create();
         mat4.invert(m, cam.getViewMatrix());
         const normalMatrix = mat4.create();
-        mat4.invert(normalMatrix, cam.getViewMatrix());
+        mat4.invert(normalMatrix, modelMatrix);
         mat4.transpose(normalMatrix, normalMatrix);
 
 

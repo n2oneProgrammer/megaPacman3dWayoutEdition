@@ -27,12 +27,13 @@ class myComponent extends Module {
 }
 
 let cubeMesh = OBJLoader.parse(await FileLoader.load("resources/models/cube.obj"));
+let ghostMesh = OBJLoader.parse(await FileLoader.load("resources/models/ghost.obj"));
 console.log(cubeMesh);
 let canvas = new CanvasController("#mainCanvas");
 let scene = new Scene(canvas);
 let cam = new Model({
     position: [0, 0, -10],
-    rotation: [0, 30, 0]
+    rotation: [0, 0, 0]
 });
 let cameraModule = new CameraModule({
     fov: 60,
@@ -48,10 +49,24 @@ let model = new Model({
     scale: [1, 1, 1]
 });
 let renderModule = new RenderModule({
-    mesh: cubeMesh,
+    mesh: ghostMesh,
     texture: new OneColorTexture(new Color([1, 0, 0, 1]))
 });
 model.addModule(renderModule);
 model.addModule(new myComponent(30));
 scene.addModel(model);
+
+let model2 = new Model({
+    rotation: [0, 0, 0],
+    position: [0, -2, -5],
+    scale: [2, 0.2, 2]
+});
+let renderModule2 = new RenderModule({
+    mesh: cubeMesh,
+    texture: new OneColorTexture(new Color([1, 0, 0, 1]))
+});
+model2.addModule(renderModule2);
+// model2.addModule(new myComponent(30));
+scene.addModel(model2);
+
 scene.start();
