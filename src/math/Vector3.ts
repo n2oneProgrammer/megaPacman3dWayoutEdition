@@ -1,4 +1,5 @@
 import Matrix from "../../../noneEngine/src/math/Matrix.js";
+import {vec3} from "gl-matrix";
 
 interface IVector3 {
     x: number;
@@ -130,4 +131,8 @@ export default class Vector3 {
     static one = new Vector3([1, 1, 1]);
     static forward = new Vector3([0, 0, 1]);
     static up = new Vector3([0, 1, 0]);
+
+    toArray(): vec3 {
+        return [this._x, this._y, this._z];
+    }
 }

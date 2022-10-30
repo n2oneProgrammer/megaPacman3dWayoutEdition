@@ -28,4 +28,8 @@ export default class Vector2 {
     get y(): number {
         return this._y;
     }
+
+    sub(v: Vector2) {
+        return new Vector2([this._x - v._x, this._y - v._y])
+    }
 }

@@ -1,7 +1,8 @@
 import Module from "../Module";
 import CanvasController from "../CanvasController";
-import {mat4, quat} from "gl-matrix";
+import {mat4} from "gl-matrix";
 import Scene from "../Scene";
+import Quaternion from "../../math/Quaternion";
 
 export interface ICameraModule {
     fov: number;
@@ -36,12 +37,7 @@ export default class CameraModule extends Module {
         let owner = this.modelOwner;
         let result = mat4.create();
         if (!owner) return result;
-        let rot = quat.create();
-        // let trans = vec3.create();
-        let rot2 = owner.getQuaternionRotation();
-
-        quat.invert(rot, rot2);
-        mat4.fromRotationTranslation(result, owner.getQuaternionRotation(), owner.position);
+        mat4.fromRotationTranslation(result, Quaternion.setFromEuler(owner.rotation).toArray(), owner.position.toArray());
         return result;
     }
 

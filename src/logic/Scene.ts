@@ -51,6 +51,8 @@ export default class Scene {
 
 
         this._models.forEach(m => m.update(delta));
+
+        InputService.instance.resetMovement();
         requestAnimationFrame(() => this.gameLoop());
     }
 

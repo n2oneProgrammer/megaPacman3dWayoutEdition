@@ -106,7 +106,7 @@ export default class RenderModule extends Module {
         if (!this.shaderProgram) return;
         let gl = canvas.canvasCtx;
         const modelMatrix = mat4.create();
-        mat4.fromRotationTranslationScale(modelMatrix, owner.getQuaternionRotation(), owner.position, owner.scale);
+        mat4.fromRotationTranslationScale(modelMatrix, owner.getQuaternionRotation().toArray(), owner.position.toArray(), owner.scale.toArray());
         let cam = Scene.instance.mainCamera;
         if (!cam) return;
         let m = mat4.create();

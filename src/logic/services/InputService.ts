@@ -34,13 +34,16 @@ export default class InputService {
         events.forEach(f => f(event));
     }
 
+    resetMovement() {
+        this.mouseMoment = new Vector2([0, 0]);
+    }
+
     private mouseover(event: MouseEvent) {
         let x = event.x - this.canvas.getBoundingClientRect().x;
         let y = event.y - this.canvas.getBoundingClientRect().y;
         this.mousePosition = new Vector2([x, y]);
         this.mouseMoment = new Vector2([event.movementX, event.movementY]);
-        // console.log(event);
-        console.log(this.mouseMoment)
+        console.log(this.mouseMoment, Math.random());
         this.runEvent(EventType.MOUSE_MOVE, event);
     }
 
@@ -55,7 +58,8 @@ export default class InputService {
     }
 
     private keydown(event: KeyboardEvent) {
-        this.keyPressButton.push(event.key);
+        if (!this.keyPressButton.some((k) => k === event.key))
+            this.keyPressButton.push(event.key);
         this.runEvent(EventType.KEYBOARD_CLICK, event);
     }
 
@@ -86,8 +90,16 @@ export default class InputService {
         }
     }
 
+    public getMouseMoment(): Vector2 {
+        return this.mouseMoment;
+    }
+
     public getMousePosition(): Vector2 {
         return this.mousePosition;
+    }
+
+    public getKeyPress(): string[] {
+        return this.keyPressButton;
     }
 
     public isMouseButtonClick(button: MouseButton) {
@@ -95,7 +107,7 @@ export default class InputService {
     }
 
     public isKeyButtonPress(button: string) {
-        return this.keyPressButton.some((m) => m != button);
+        return this.keyPressButton.some((m) => m === button);
     }
 
     public mouseLock() {

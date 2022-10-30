@@ -25,3 +25,5 @@ export function map(
 ): number {
     return ((v - minIn) * (maxOut - minOut)) / (maxIn - minIn) + minIn;
 }
+
+

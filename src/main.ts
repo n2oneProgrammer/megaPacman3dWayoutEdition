@@ -9,7 +9,9 @@ import Color from "./math/Color";
 import OBJLoader from "./logic/Loaders/OBJLoader";
 import FileLoader from "./logic/Loaders/FileLoader";
 import Module from "./logic/Module";
-import {vec3} from "gl-matrix";
+import FlyingCamera from "./gameLogic/FlyingCamera";
+import Vector3 from "./math/Vector3";
+import {deg2rad} from "./math/Utils";
 
 class myComponent extends Module {
     private speed: number;
@@ -21,7 +23,7 @@ class myComponent extends Module {
 
     update(deltaTime: number): void {
         if (!this.modelOwner) return;
-        vec3.add(this.modelOwner.rotation, this.modelOwner.rotation, [0, this.speed * deltaTime, 0])
+        this.modelOwner.rotation = this.modelOwner.rotation.add(new Vector3([0, this.speed * deltaTime, 0]))
     }
 
 }
@@ -32,34 +34,40 @@ console.log(cubeMesh);
 let canvas = new CanvasController("#mainCanvas");
 let scene = new Scene(canvas);
 let cam = new Model({
-    position: [0, 0, -10],
-    rotation: [0, 0, 0]
+    position: new Vector3([0, 1, -10]),
+    rotation: new Vector3([0, deg2rad(180), 0])
 });
 let cameraModule = new CameraModule({
     fov: 60,
     near: 0.01,
     far: 1000
 });
+let flyCam = new FlyingCamera({
+    movementSpeed: 10,
+    sensitivity: 4
+});
 cam.addModule(cameraModule);
+cam.addModule(flyCam);
 scene.addModel(cam);
 cameraModule.setAsMainCamera();
 let model = new Model({
-    rotation: [0, 0, 0],
-    position: [0, 0, -5],
-    scale: [1, 1, 1]
+    rotation: new Vector3([0, 0, 0]),
+    position: new Vector3([0, 0, 0]),
+    scale: new Vector3([1, 1, 1])
 });
 let renderModule = new RenderModule({
     mesh: ghostMesh,
     texture: new OneColorTexture(new Color([1, 0, 0, 1]))
 });
 model.addModule(renderModule);
+// model.addModule(flyCam);
 model.addModule(new myComponent(30));
 scene.addModel(model);
 
 let model2 = new Model({
-    rotation: [0, 0, 0],
-    position: [0, -2, -5],
-    scale: [2, 0.2, 2]
+    rotation: new Vector3([0, 0, 0]),
+    position: new Vector3([0, -2, 0]),
+    scale: new Vector3([2, 0.2, 2])
 });
 let renderModule2 = new RenderModule({
     mesh: cubeMesh,
