@@ -26,16 +26,16 @@ export default class FlyingCamera extends Module {
         if (this.modelOwner == null) return;
         let move: vec3 = [0, 0, 0];
         // console.log(InputService.instance.getKeyPress());
-        if (InputService.instance.isKeyButtonPress("ArrowUp")) {
+        if (InputService.instance.isKeyButtonPress("w")) {
             move[2] = -1;
         }
-        if (InputService.instance.isKeyButtonPress("ArrowDown")) {
+        if (InputService.instance.isKeyButtonPress("s")) {
             move[2] = 1;
         }
-        if (InputService.instance.isKeyButtonPress("ArrowRight")) {
+        if (InputService.instance.isKeyButtonPress("d")) {
             move[0] = 1;
         }
-        if (InputService.instance.isKeyButtonPress("ArrowLeft")) {
+        if (InputService.instance.isKeyButtonPress("a")) {
             move[0] = -1;
         }
         if (InputService.instance.isKeyButtonPress(" ")) {
