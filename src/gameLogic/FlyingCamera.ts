@@ -45,9 +45,7 @@ export default class FlyingCamera extends Module {
             move[1] = -1;
         }
         let trans = Quaternion.setFromEuler(this.modelOwner.rotation).mul(new Vector3(move)) as Vector3;
-        console.log(trans);
         this.modelOwner.position = this.modelOwner.position.add(trans.mul(this.movementSpeed * deltaTime));
-        console.log(this.modelOwner.position)
 
         let mouseMove = InputService.instance.getMouseMoment();
         this.modelOwner.rotation = this.modelOwner.rotation.add(new Vector3([0, -mouseMove.x, 0]).mul(this.sensitivity * deltaTime));

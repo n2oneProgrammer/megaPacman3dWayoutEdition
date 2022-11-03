@@ -23,11 +23,13 @@ export default class Color {
             this._b = data.b;
             this._a = data.a;
         }
+
     }
 
     toString(): string {
         return `rgba(${this._r},${this._g},${this._b},${this._a})`;
     }
+
 
     //getters and setters
 
@@ -62,7 +64,6 @@ export default class Color {
     set a(value: number) {
         this._a = value;
     }
-
 //static
     static BLACK = new Color([0, 0, 0, 1]);
     static WHITE = new Color([255, 255, 255, 1]);

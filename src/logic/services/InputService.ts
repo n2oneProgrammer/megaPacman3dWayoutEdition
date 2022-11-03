@@ -43,7 +43,6 @@ export default class InputService {
         let y = event.y - this.canvas.getBoundingClientRect().y;
         this.mousePosition = new Vector2([x, y]);
         this.mouseMoment = new Vector2([event.movementX, event.movementY]);
-        console.log(this.mouseMoment, Math.random());
         this.runEvent(EventType.MOUSE_MOVE, event);
     }
 

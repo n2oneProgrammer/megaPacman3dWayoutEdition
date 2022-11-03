@@ -1,17 +1,16 @@
 import './style.css'
 import CanvasController from "./logic/CanvasController.js";
-import Scene from "./logic/Scene";
 import Model from "./logic/Model";
 import RenderModule from "./logic/modules/RenderModule";
 import CameraModule from "./logic/modules/CameraModule";
 import OneColorTexture from "./logic/Textures/OneColorTexture";
 import Color from "./math/Color";
-import OBJLoader from "./logic/Loaders/OBJLoader";
-import FileLoader from "./logic/Loaders/FileLoader";
 import Module from "./logic/Module";
-import FlyingCamera from "./gameLogic/FlyingCamera";
+// import FlyingCamera from "./gameLogic/FlyingCamera";
 import Vector3 from "./math/Vector3";
 import {deg2rad} from "./math/Utils";
+import {cubeMesh, ghostMesh} from "./logic/BasicFigures";
+import GeneratedScene from "./gameLogic/GeneratedScene";
 
 class myComponent extends Module {
     private speed: number;
@@ -28,26 +27,34 @@ class myComponent extends Module {
 
 }
 
-let cubeMesh = OBJLoader.parse(await FileLoader.load("resources/models/cube.obj"));
-let ghostMesh = OBJLoader.parse(await FileLoader.load("resources/models/ghost.obj"));
-console.log(cubeMesh);
 let canvas = new CanvasController("#mainCanvas");
-let scene = new Scene(canvas);
+let scene = new GeneratedScene({
+    canvasController: canvas,
+    mapMask: [
+        [0,4,2,8,4,4,4,4,2,8,4,0],
+        [2,9,4,0,5,1,1,5,0,4,3,8],
+        [0,0,5,2,13,4,4,7,8,5,0,0],
+        [2,12,1,0,5,5,5,5,0,1,6,8],
+        [0,1,2,8,1,1,1,1,2,8,1,0]
+
+    ],
+    tileSize: 10
+});
 let cam = new Model({
-    position: new Vector3([0, 1, -10]),
-    rotation: new Vector3([0, deg2rad(180), 0])
+    position: new Vector3([0, 130, 0]),
+    rotation: new Vector3([deg2rad(-90),0, deg2rad(90)])
 });
 let cameraModule = new CameraModule({
     fov: 60,
     near: 0.01,
     far: 1000
 });
-let flyCam = new FlyingCamera({
-    movementSpeed: 10,
-    sensitivity: 4
-});
+// let flyCam = new FlyingCamera({
+//     movementSpeed: 30,
+//     sensitivity: 2
+// });
 cam.addModule(cameraModule);
-cam.addModule(flyCam);
+// cam.addModule(flyCam);
 scene.addModel(cam);
 cameraModule.setAsMainCamera();
 let model = new Model({
@@ -57,7 +64,7 @@ let model = new Model({
 });
 let renderModule = new RenderModule({
     mesh: ghostMesh,
-    texture: new OneColorTexture(new Color([1, 0, 0, 1]))
+    texture: new OneColorTexture(new Color([256, 0, 0, 1]))
 });
 model.addModule(renderModule);
 // model.addModule(flyCam);
@@ -71,7 +78,7 @@ let model2 = new Model({
 });
 let renderModule2 = new RenderModule({
     mesh: cubeMesh,
-    texture: new OneColorTexture(new Color([1, 0, 0, 1]))
+    texture: new OneColorTexture(new Color([256, 0, 0, 1]))
 });
 model2.addModule(renderModule2);
 // model2.addModule(new myComponent(30));
