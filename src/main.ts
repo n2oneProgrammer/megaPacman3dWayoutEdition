@@ -6,7 +6,6 @@ import CameraModule from "./logic/modules/CameraModule";
 import OneColorTexture from "./logic/Textures/OneColorTexture";
 import Color from "./math/Color";
 import Module from "./logic/Module";
-// import FlyingCamera from "./gameLogic/FlyingCamera";
 import Vector3 from "./math/Vector3";
 import {deg2rad} from "./math/Utils";
 import {cubeMesh, ghostMesh} from "./logic/BasicFigures";
