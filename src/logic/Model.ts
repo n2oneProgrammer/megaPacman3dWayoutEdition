@@ -30,7 +30,7 @@ export default class Model {
     }
 
     update(deltaTime: number) {
-        this._modules.forEach(m => m.update(deltaTime))
+        this._modules.forEach(m => m.update(deltaTime));
     }
 
     get modules(): Module[] {

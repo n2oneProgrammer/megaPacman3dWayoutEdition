@@ -3,13 +3,15 @@ import RectXZCollider from "./RectXZCollider";
 
 export interface ICircleXZCollider {
     radius: number;
+    whenCollide?: () => void;
 }
 
 export default class CircleXZCollider extends Colliders {
     private _radius: number;
 
-    constructor({radius}: ICircleXZCollider) {
-        super('circleXZ');
+    constructor({radius, whenCollide}: ICircleXZCollider) {
+        super('circleXZ', whenCollide || (() => {
+        }));
         this._radius = radius;
     }
 
@@ -22,6 +24,7 @@ export default class CircleXZCollider extends Colliders {
                 if ((collider as RectXZCollider).checkCollisionCircleXZ(this)) {
                     this._isCollide = true;
                     this.collisionsObjects.push(collider);
+                    this.whenCollide();
                 }
         }
 

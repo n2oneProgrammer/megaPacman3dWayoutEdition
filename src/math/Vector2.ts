@@ -57,4 +57,8 @@ export default class Vector2 {
     normalize() {
         return this.mul(1 / Math.sqrt(this.lengthSq()));
     }
+
+    length() {
+        return Math.sqrt(this.lengthSq());
+    }
 }

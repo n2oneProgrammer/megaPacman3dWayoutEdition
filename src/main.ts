@@ -57,7 +57,7 @@ let flyCam = new FlyingCamera({
     movementSpeed: 10,
     sensitivity: 5
 });
-let collider = new CircleXZCollider({radius: 1});
+let collider = new CircleXZCollider({radius: 1, whenCollide: flyCam.repairPosition.bind(flyCam)});
 cam.addModule(cameraModule);
 cam.addModule(flyCam);
 cam.addModule(collider);

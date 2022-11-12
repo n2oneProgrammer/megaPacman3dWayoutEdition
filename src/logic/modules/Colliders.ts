@@ -5,11 +5,13 @@ export default abstract class Colliders extends Module {
     protected _isCollide: boolean = false;
     private _collisionsObjects: Colliders[] = [];
     private readonly _colliderName: string;
+    protected whenCollide: () => void;
 
-    protected constructor(name: string) {
-        super(99);
+    protected constructor(name: string, whenCollide: () => void) {
+        super(101);
         Colliders.colliders.push(this);
         this._colliderName = name;
+        this.whenCollide = whenCollide;
         this._isCollide = false;
     }
 

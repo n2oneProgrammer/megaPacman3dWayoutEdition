@@ -21,7 +21,7 @@ export default class RenderModule extends Module {
     private normal_buffer: WebGLBuffer | null = null;
     private color_buffer: WebGLBuffer | null = null;
     private mesh: Mesh;
-    private texture: Texture;
+    public texture: Texture;
 
     constructor({mesh, texture}: IRenderModule) {
         super(100);
