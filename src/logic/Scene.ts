@@ -49,7 +49,6 @@ export default class Scene {
         gl.viewport(0.0, 0.0, this.canvasController.canvasDOM.width, this.canvasController.canvasDOM.height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
-
         this._models.forEach(m => m.update(delta));
 
         InputService.instance.resetMovement();

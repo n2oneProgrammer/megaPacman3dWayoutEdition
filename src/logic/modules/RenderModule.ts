@@ -69,7 +69,7 @@ export default class RenderModule extends Module {
             'vColor = color;' +
             'highp vec3 ambientLight = vec3(0.3, 0.3,0.3);' +
             'highp vec3 directionalLightColor = vec3(1, 0.2, 0.2);' +
-            'highp vec3 directionalVector = normalize(vec3(10, 5, -5));' +
+            'highp vec3 directionalVector = normalize(vec3(0, 5, 0));' +
             'highp vec4 transformedNormal = uNormalMatrix * vec4(normal, 1.0);' +
             'highp float directional = max(dot(transformedNormal.xyz, directionalVector), 0.0);' +
             'vLighting = ambientLight + (directionalLightColor * directional);' +

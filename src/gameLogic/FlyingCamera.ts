@@ -5,6 +5,7 @@ import {vec3} from "gl-matrix";
 import Vector3 from "../math/Vector3";
 import Quaternion from "../math/Quaternion";
 import {deg2rad} from "../math/Utils";
+import Colliders from "../logic/modules/Colliders";
 
 export interface IFlyingCamera {
     movementSpeed: number;
@@ -14,9 +15,11 @@ export interface IFlyingCamera {
 export default class FlyingCamera extends Module {
     private movementSpeed: number;
     private sensitivity: number;
+    private prevPos: Vector3;
 
     constructor({movementSpeed, sensitivity}: IFlyingCamera) {
         super();
+        this.prevPos = Vector3.zero;
         this.movementSpeed = movementSpeed;
         this.sensitivity = sensitivity;
         CanvasController.instance?.canvasDOM.addEventListener("click", () => InputService.instance.mouseLock());
@@ -24,25 +27,29 @@ export default class FlyingCamera extends Module {
 
     update(deltaTime: number): void {
         if (this.modelOwner == null) return;
+        let block = [0, 0, 0];
+        let colliders = this.modelOwner.modules.filter(m => m instanceof Colliders && m.isCollide);
+        if (colliders.length > 0) {
+
+
+
+
+            this.modelOwner.position = this.prevPos;
+        }
+        this.prevPos = this.modelOwner.position;
         let move: vec3 = [0, 0, 0];
         // console.log(InputService.instance.getKeyPress());
-        if (InputService.instance.isKeyButtonPress("w")) {
+        if (InputService.instance.isKeyButtonPress("w") && block[0] != -1) {
             move[2] = -1;
         }
-        if (InputService.instance.isKeyButtonPress("s")) {
+        if (InputService.instance.isKeyButtonPress("s") && block[0] != 1) {
             move[2] = 1;
         }
-        if (InputService.instance.isKeyButtonPress("d")) {
+        if (InputService.instance.isKeyButtonPress("d") && block[2] != 1) {
             move[0] = 1;
         }
-        if (InputService.instance.isKeyButtonPress("a")) {
+        if (InputService.instance.isKeyButtonPress("a") && block[2] != -1) {
             move[0] = -1;
-        }
-        if (InputService.instance.isKeyButtonPress(" ")) {
-            move[1] = 1;
-        }
-        if (InputService.instance.isKeyButtonPress("Control")) {
-            move[1] = -1;
         }
         let trans = Quaternion.setFromEuler(this.modelOwner.rotation).mul(new Vector3(move)) as Vector3;
         this.modelOwner.position = this.modelOwner.position.add(trans.mul(this.movementSpeed * deltaTime));

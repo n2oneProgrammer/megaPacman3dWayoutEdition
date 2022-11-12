@@ -12,10 +12,12 @@ export default class CanvasController {
             throw new Error("Invalid name")
         }
         this._canvasDOM = canvasDOM;
-        let ctx = this._canvasDOM.getContext("webgl2");
+        let ctx = this._canvasDOM.getContext("webgl2", {antialias: false});
         if (ctx == null) {
             throw new Error("Problem with create Context")
         }
+        let a = ctx.getContextAttributes();
+        if (a != null) a.antialias = false;
         this._canvasCtx = ctx;
         // Set clear color to black, fully opaque
         this._canvasCtx.clearColor(0.0, 0.0, 0.0, 1.0);
