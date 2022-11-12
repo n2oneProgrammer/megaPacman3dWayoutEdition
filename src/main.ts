@@ -1,31 +1,13 @@
 import './style.css'
 import CanvasController from "./logic/CanvasController.js";
 import Model from "./logic/Model";
-import RenderModule from "./logic/modules/RenderModule";
 import CameraModule from "./logic/modules/CameraModule";
-import OneColorTexture from "./logic/Textures/OneColorTexture";
 import Color from "./math/Color";
-import Module from "./logic/Module";
 import Vector3 from "./math/Vector3";
-import {cubeMesh, ghostMesh} from "./logic/BasicFigures";
 import FlyingCamera from "./gameLogic/FlyingCamera";
 import CircleXZCollider from "./logic/modules/Colliders/CircleXZCollider";
 import GeneratedScene from "./gameLogic/GeneratedScene";
 
-class myComponent extends Module {
-    private speed: number;
-
-    constructor(speed: number) {
-        super();
-        this.speed = speed;
-    }
-
-    update(deltaTime: number): void {
-        if (!this.modelOwner) return;
-        this.modelOwner.rotation = this.modelOwner.rotation.add(new Vector3([0, this.speed * deltaTime, 0]))
-    }
-
-}
 
 let canvas = new CanvasController("#mainCanvas");
 let scene = new GeneratedScene({
@@ -63,33 +45,4 @@ cam.addModule(flyCam);
 cam.addModule(collider);
 scene.addModel(cam);
 cameraModule.setAsMainCamera();
-let model = new Model({
-    rotation: new Vector3([0, 0, 0]),
-    position: new Vector3([0, 2, 0]),
-    scale: new Vector3([1, 1, 1])
-});
-let renderModule = new RenderModule({
-    mesh: ghostMesh,
-    texture: new OneColorTexture(new Color([256, 0, 0, 1]))
-});
-// let collider2 = new CircleXZCollider({radius: 1});
-model.addModule(renderModule);
-// model.addModule(collider2);
-model.addModule(new myComponent(30));
-scene.addModel(model);
-
-let model2 = new Model({
-    rotation: new Vector3([0, 0, 0]),
-    position: new Vector3([0, 1, 0]),
-    scale: new Vector3([1, 1, 1])
-});
-let renderModule2 = new RenderModule({
-    mesh: cubeMesh,
-    texture: new OneColorTexture(new Color([256, 0, 0, 1]))
-});
-model2.addModule(renderModule2);
-// model2.addModule(flyCam);
-// model2.addModule(new RectXZCollider({size: Vector2.one}));
-scene.addModel(model2);
-
 scene.start();
