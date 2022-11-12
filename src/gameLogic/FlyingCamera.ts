@@ -58,7 +58,7 @@ export default class FlyingCamera extends Module {
                         }
                         let transform = this.modelOwner.position.toVec2XZ().sub(tObject.position.toVec2XZ());
                         transform = transform.mul(normal);
-                        transform = transform.sub(new Vector2([t.size.x + c.radius + 0.001, t.size.y + c.radius + 0.001]))
+                        transform = transform.sub(new Vector2([t.size.x + c.radius + 0.01, t.size.y + c.radius + 0.01]))
                         transform = transform.mul(normal);
                         console.log("");
                         console.log("NORMAL", normal);
