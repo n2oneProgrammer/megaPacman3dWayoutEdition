@@ -19,14 +19,12 @@ export default class Model {
         this.position = position || Vector3.zero;
         this.rotation = rotation || Vector3.zero;
         this.scale = scale || Vector3.one;
-        console.log(this);
     }
 
     addModule(module: Module) {
         module.modelOwner = this;
         this._modules.push(module);
         this._modules.sort((a, b) => a.important - b.important);
-        console.log(this._modules);
     }
 
     update(deltaTime: number) {
