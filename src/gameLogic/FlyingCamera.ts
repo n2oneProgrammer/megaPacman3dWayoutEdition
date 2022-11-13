@@ -4,7 +4,6 @@ import InputService from "../logic/services/InputService";
 import {vec3} from "gl-matrix";
 import Vector3 from "../math/Vector3";
 import Quaternion from "../math/Quaternion";
-import {deg2rad} from "../math/Utils";
 import Colliders from "../logic/modules/Colliders";
 import RectXZCollider from "../logic/modules/Colliders/RectXZCollider";
 import CircleXZCollider from "../logic/modules/Colliders/CircleXZCollider";
@@ -19,11 +18,9 @@ export default class FlyingCamera extends Module {
     private movementSpeed: number;
     private sensitivity: number;
 
-    // private prevPos: Vector3;
 
     constructor({movementSpeed, sensitivity}: IFlyingCamera) {
         super(102);
-        // this.prevPos = Vector3.zero;
         this.movementSpeed = movementSpeed;
         this.sensitivity = sensitivity;
         CanvasController.instance?.canvasDOM.addEventListener("click", () => InputService.instance.mouseLock());
@@ -60,42 +57,28 @@ export default class FlyingCamera extends Module {
                         transform = transform.mul(normal);
                         transform = transform.sub(new Vector2([t.size.x + c.radius + 0.01, t.size.y + c.radius + 0.01]))
                         transform = transform.mul(normal);
-                        console.log("");
-                        console.log("NORMAL", normal);
-                        console.log("POSITION", this.modelOwner.position, tObject.position);
-                        console.log("RADIUS AND SIZE", c.radius, t.size);
-                        console.log("DIFF IN POS", this.modelOwner.position.sub(tObject.position));
-                        console.log("TRANSFORM", transform);
-                        if (transform.y != 0) {
-                            console.error(c, t);
-                        }
                         finalTransform = finalTransform.add(transform);
-                        // this.modelOwner.position = this.modelOwner.position.sub(new Vector3([transform.x, 0, transform.y]));
                     });
                     if (this.modelOwner)
                         this.modelOwner.position = this.modelOwner.position.sub(new Vector3([finalTransform.x, 0, finalTransform.y]));
                 }
-            })
-            // this.modelOwner.position = this.prevPos;
+            });
         }
     }
 
     update(deltaTime: number): void {
         if (this.modelOwner == null) return;
-        let block = [0, 0, 0];
-        // this.prevPos = this.modelOwner.position;
         let move: vec3 = [0, 0, 0];
-        // console.log(InputService.instance.getKeyPress());
-        if (InputService.instance.isKeyButtonPress("w") && block[0] != -1) {
+        if (InputService.instance.isKeyButtonPress("w")) {
             move[2] = -1;
         }
-        if (InputService.instance.isKeyButtonPress("s") && block[0] != 1) {
+        if (InputService.instance.isKeyButtonPress("s")) {
             move[2] = 1;
         }
-        if (InputService.instance.isKeyButtonPress("d") && block[2] != 1) {
+        if (InputService.instance.isKeyButtonPress("d")) {
             move[0] = 1;
         }
-        if (InputService.instance.isKeyButtonPress("a") && block[2] != -1) {
+        if (InputService.instance.isKeyButtonPress("a")) {
             move[0] = -1;
         }
         let trans = Quaternion.setFromEuler(this.modelOwner.rotation).mul(new Vector3(move)) as Vector3;
@@ -103,7 +86,6 @@ export default class FlyingCamera extends Module {
 
         let mouseMove = InputService.instance.getMouseMoment();
         this.modelOwner.rotation = this.modelOwner.rotation.add(new Vector3([0, -mouseMove.x, 0]).mul(this.sensitivity * deltaTime));
-        this.modelOwner.rotation = new Vector3([this.clip(this.modelOwner.rotation.x, 0, deg2rad(70)), this.modelOwner.rotation.y, this.modelOwner.rotation.z,])
     }
 
     clip(v: number, min: number, max: number) {
