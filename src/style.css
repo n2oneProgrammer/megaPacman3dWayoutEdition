@@ -1,4 +1,50 @@
-#mainCanvas{
-  max-width: 80%;
-  max-height: 80%;
+body {
+    margin: 0;
+    padding: 0;
 }
+
+header {
+    text-align: center;
+    margin: 0 auto;
+    flex: 1;
+}
+
+#app {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 3;
+    display: flex;
+}
+
+#app > div {
+    flex: 1;
+}
+
+#mainCanvasDiv {
+    flex: 1;
+}
+
+#mapCanvasDiv {
+    flex: 1;
+}
+
+#mapCanvas {
+    background: blue;
+    height: 90%;
+    display: block;
+    margin-left: 10px;
+}
+
+#mainCanvas {
+    image-rendering: pixelated;
+    height: 90%;
+    display: block;
+    margin-right: 10px;
+    margin-left: auto;
+}
+
