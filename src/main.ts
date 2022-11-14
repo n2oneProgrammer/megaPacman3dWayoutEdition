@@ -7,11 +7,21 @@ import Vector3 from "./math/Vector3";
 import FlyingCamera from "./gameLogic/FlyingCamera";
 import CircleXZCollider from "./logic/modules/Colliders/CircleXZCollider";
 import GeneratedScene from "./gameLogic/GeneratedScene";
+import MapController from "./logic/MapController";
+import Vector2 from "./math/Vector2";
+import DrawCircleOnMap from "./gameLogic/map/DrawCircleOnMap";
 
 
 let canvas = new CanvasController("#mainCanvas");
+let mapCanvas = new MapController({
+    elementName: "#mapCanvas",
+    translateMap: new Vector2([-50, 100]),
+    scale: new Vector2([10, 10]),
+    isRotate90: true
+});
 let scene = new GeneratedScene({
     canvasController: canvas,
+    mapController: mapCanvas,
     mapMask: [
         [0, 4, 2, 8, 4, 4, 4, 4, 2, 8, 4, 0],
         [2, 9, 4, 0, 5, 1, 1, 5, 0, 4, 3, 8],
@@ -36,13 +46,18 @@ let cameraModule = new CameraModule({
     far: 1000
 });
 let flyCam = new FlyingCamera({
-    movementSpeed: 10,
+    movementSpeed: 5,
     sensitivity: 5
+});
+let pointOnMap = new DrawCircleOnMap({
+    mapController: mapCanvas,
+    radius: 10
 });
 let collider = new CircleXZCollider({radius: 1, whenCollide: flyCam.repairPosition.bind(flyCam)});
 cam.addModule(cameraModule);
 cam.addModule(flyCam);
 cam.addModule(collider);
+cam.addModule(pointOnMap);
 scene.addModel(cam);
 cameraModule.setAsMainCamera();
 scene.start();

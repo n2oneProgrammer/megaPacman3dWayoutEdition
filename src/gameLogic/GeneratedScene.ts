@@ -8,11 +8,14 @@ import OneColorTexture from "../logic/Textures/OneColorTexture";
 import Color from "../math/Color";
 import RectXZCollider from "../logic/modules/Colliders/RectXZCollider";
 import Vector2 from "../math/Vector2";
+import MapController from "../logic/MapController";
+import DrawRectOnMap from "./map/DrawRectOnMap";
 
 type maskType = number; // 1 - up, 2 - right, 4 - down, 8 - left
 
 export interface IMapGenerator {
-    canvasController: CanvasController,
+    canvasController: CanvasController;
+    mapController: MapController;
     mapMask: maskType[][];
     tileSize?: number;
     wallHeight?: number;
@@ -26,8 +29,17 @@ export default class GeneratedScene extends Scene {
     private wallColor: Color;
     private floorColor: Color;
 
-    constructor({canvasController, mapMask, tileSize, wallHeight, wallColor, floorColor}: IMapGenerator) {
+    constructor({
+                    canvasController,
+                    mapController,
+                    mapMask,
+                    tileSize,
+                    wallHeight,
+                    wallColor,
+                    floorColor
+                }: IMapGenerator) {
         super(canvasController);
+        this.addMapController(mapController);
         this.tileSize = tileSize || 1;
         this.wallHeight = wallHeight || 1;
         this.wallColor = wallColor;
@@ -45,6 +57,12 @@ export default class GeneratedScene extends Scene {
             mesh: cubeMesh,
             texture: new OneColorTexture(color)
         }))
+        if (this.mapController != null) {
+            obj.addModule(new DrawRectOnMap({
+                mapController: this.mapController,
+                size: Vector2.one
+            }))
+        }
         obj.addModule(new RectXZCollider({size: Vector2.one}));
         this.addModel(obj);
     }

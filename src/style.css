@@ -34,7 +34,6 @@ main {
 }
 
 #mapCanvas {
-    background: blue;
     height: 90%;
     display: block;
     margin-left: 10px;
@@ -43,6 +42,7 @@ main {
 #mainCanvas {
     image-rendering: pixelated;
     height: 90%;
+    max-width: 90%;
     display: block;
     margin-right: 10px;
     margin-left: auto;

@@ -2,6 +2,7 @@ import CanvasController from "./CanvasController.js";
 import Model from "./Model.js";
 import CameraModule from "./modules/CameraModule";
 import InputService from "./services/InputService";
+import MapController from "./MapController";
 
 export default class Scene {
     private static _instance: Scene;
@@ -11,6 +12,7 @@ export default class Scene {
     private lastTime: number;
     private timeScale = 1;
     private _mainCamera: CameraModule | null = null;
+    private _mapController: MapController | null = null;
 
     constructor(canvasController: CanvasController) {
         Scene._instance = this;
@@ -48,13 +50,16 @@ export default class Scene {
 
         gl.viewport(0.0, 0.0, this.canvasController.canvasDOM.width, this.canvasController.canvasDOM.height);
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
-
+        if (this._mapController !== null) this._mapController.clear();
         this._models.forEach(m => m.update(delta));
 
         InputService.instance.resetMovement();
         requestAnimationFrame(() => this.gameLoop());
     }
 
+    addMapController(mapController: MapController) {
+        this._mapController = mapController;
+    }
 
     static get instance(): Scene {
         return this._instance;
@@ -62,6 +67,10 @@ export default class Scene {
 
     get models(): Model[] {
         return this._models;
+    }
+
+    get mapController(): MapController | null {
+        return this._mapController;
     }
 
     get mainCamera(): CameraModule | null {
