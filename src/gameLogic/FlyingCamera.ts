@@ -53,14 +53,25 @@ export default class FlyingCamera extends Module {
                         } else {
                             normal = this.modelOwner.position.toVec2XZ().sub(closestPoint).normalize();
                         }
-                        let transform = this.modelOwner.position.toVec2XZ().sub(tObject.position.toVec2XZ());
-                        transform = transform.mul(normal);
-                        transform = transform.sub(new Vector2([t.size.x + c.radius + 0.01, t.size.y + c.radius + 0.01]))
-                        transform = transform.mul(normal);
-                        finalTransform = finalTransform.add(transform);
+                        let trans: [number, number] = [0, 0]
+                        console.log(normal);
+                        if (normal.x != 0) {
+                            trans[0] = ((c.radius + t.size.x) - Math.abs(this.modelOwner.position.x - tObject.position.x)) * normal.x;
+                        }
+                        if (normal.y != 0) {
+                            trans[1] = ((c.radius + t.size.y) - Math.abs(this.modelOwner.position.z - tObject.position.z)) * normal.y;
+                        }
+                        console.log(trans);
+                        // let transform = this.modelOwner.position.toVec2XZ().sub(tObject.position.toVec2XZ());
+                        // transform = transform.mul(normal);
+                        // transform = transform.sub(new Vector2([t.size.x + c.radius + 0.01, t.size.y + c.radius + 0.01]))
+                        // transform = transform.mul(normal);
+                        finalTransform = finalTransform.add(new Vector2(trans));
                     });
-                    if (this.modelOwner)
-                        this.modelOwner.position = this.modelOwner.position.sub(new Vector3([finalTransform.x, 0, finalTransform.y]));
+                    if (this.modelOwner) {
+                        console.log("final", finalTransform);
+                        this.modelOwner.position = this.modelOwner.position.add(new Vector3([finalTransform.x, 0, finalTransform.y]));
+                    }
                 }
             });
         }

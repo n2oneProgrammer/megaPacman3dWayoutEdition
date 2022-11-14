@@ -79,7 +79,17 @@ export default class GeneratedScene extends Scene {
             texture: new OneColorTexture(this.floorColor)
         }))
         this.addModel(floor);
-
+        //Create cell
+        let cell = new Model({
+            position: Vector3.zero.add(new Vector3([0, this.wallHeight * 2, 0])),
+            rotation: Vector3.zero,
+            scale: new Vector3([this.tileSize * mapMask.length, 0.5, this.tileSize * mapMask[0].length])
+        });
+        cell.addModule(new RenderModule({
+            mesh: cubeMesh,
+            texture: new OneColorTexture(this.floorColor)
+        }))
+        this.addModel(cell);
         //Create boarder
         let borders = [
             [1, 0],
