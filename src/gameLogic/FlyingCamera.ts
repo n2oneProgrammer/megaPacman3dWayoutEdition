@@ -57,15 +57,9 @@ export default class FlyingCamera extends Module {
                         console.log(normal);
                         if (normal.x != 0) {
                             trans[0] = ((c.radius + t.size.x) - Math.abs(this.modelOwner.position.x - tObject.position.x)) * normal.x;
-                        }
-                        if (normal.y != 0) {
+                        } else if (normal.y != 0) {
                             trans[1] = ((c.radius + t.size.y) - Math.abs(this.modelOwner.position.z - tObject.position.z)) * normal.y;
                         }
-                        console.log(trans);
-                        // let transform = this.modelOwner.position.toVec2XZ().sub(tObject.position.toVec2XZ());
-                        // transform = transform.mul(normal);
-                        // transform = transform.sub(new Vector2([t.size.x + c.radius + 0.01, t.size.y + c.radius + 0.01]))
-                        // transform = transform.mul(normal);
                         finalTransform = finalTransform.add(new Vector2(trans));
                     });
                     if (this.modelOwner) {

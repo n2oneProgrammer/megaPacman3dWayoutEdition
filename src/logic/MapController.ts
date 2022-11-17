@@ -34,7 +34,6 @@ export default class MapController {
     clear() {
         this.canvasCtx.clearRect(0, 0, this.width, this.height);
     }
-
     drawRect(pos: Vector2, size: Vector2, color: Color) {
         let startPos = pos.sub(size).mul(this.scale).add(this.translateMap).add(new Vector2([this.width / 2, this.height / 2]));
         let newSize = size.mul(2).mul(this.scale);
@@ -56,5 +55,17 @@ export default class MapController {
         this.canvasCtx.fillStyle = color.toString();
         this.canvasCtx.arc(startPos.x, startPos.y, radius, 0, 2 * Math.PI);
         this.canvasCtx.fill();
+    }
+
+    drawImage(image: HTMLImageElement, pos: Vector2, rot: number, size: Vector2) {
+        let startPos = pos.mul(this.scale).add(this.translateMap).add(new Vector2([this.width / 2, this.height / 2]));
+        if (this.isRotate90) {
+            startPos = new Vector2([startPos.y, startPos.x])
+        }
+        this.canvasCtx.save();
+        this.canvasCtx.translate(startPos.x, startPos.y);
+        this.canvasCtx.rotate(-rot);
+        this.canvasCtx.drawImage(image, -size.x/2, -size.y/2, size.x, size.y);
+        this.canvasCtx.restore();
     }
 }

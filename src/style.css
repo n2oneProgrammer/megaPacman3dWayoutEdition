@@ -37,6 +37,7 @@ main {
     height: 90%;
     display: block;
     margin-left: 10px;
+    transform: scaleX(-1);
 }
 
 #mainCanvas {

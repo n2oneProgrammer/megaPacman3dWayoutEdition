@@ -9,7 +9,7 @@ import CircleXZCollider from "./logic/modules/Colliders/CircleXZCollider";
 import GeneratedScene from "./gameLogic/GeneratedScene";
 import MapController from "./logic/MapController";
 import Vector2 from "./math/Vector2";
-import DrawCircleOnMap from "./gameLogic/map/DrawCircleOnMap";
+import DrawImageOnMap from "./gameLogic/map/DrawImageOnMap";
 
 
 let canvas = new CanvasController("#mainCanvas");
@@ -49,9 +49,11 @@ let flyCam = new FlyingCamera({
     movementSpeed: 5,
     sensitivity: 5
 });
-let pointOnMap = new DrawCircleOnMap({
+let pointOnMap = new DrawImageOnMap({
     mapController: mapCanvas,
-    radius: 10
+    imageSrc: "/pacman.png",
+    size: new Vector2([20,20]),
+    canRotation: true
 });
 let collider = new CircleXZCollider({radius: 1, whenCollide: flyCam.repairPosition.bind(flyCam)});
 cam.addModule(cameraModule);
