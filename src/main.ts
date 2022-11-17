@@ -37,7 +37,7 @@ let scene = new GeneratedScene({
 });
 // let scene = new Scene(canvas);
 let cam = new Model({
-    position: new Vector3([1, 2, 0]),
+    position: new Vector3([2, 2, 0]),
     rotation: new Vector3([0, 0, 0])
 });
 let cameraModule = new CameraModule({
