@@ -1,4 +1,4 @@
-import Matrix from "../../../noneEngine/src/math/Matrix.js";
+import Matrix from "./Matrix.js";
 import {vec3} from "gl-matrix";
 import Vector2 from "./Vector2";
 
