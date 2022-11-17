@@ -51,7 +51,7 @@ let flyCam = new FlyingCamera({
 });
 let pointOnMap = new DrawImageOnMap({
     mapController: mapCanvas,
-    imageSrc: "/pacman.png",
+    imageSrc: "pacman.png",
     size: new Vector2([20,20]),
     canRotation: true
 });
