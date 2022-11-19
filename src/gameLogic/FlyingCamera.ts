@@ -35,6 +35,7 @@ export default class FlyingCamera extends Module {
                 if (c instanceof CircleXZCollider) {
                     c.collisionsObjects.forEach((r) => {
                         if (r == c) return;
+                        if (!(r instanceof RectXZCollider)) return;
                         let t = r as RectXZCollider;
                         let tObject = t.modelOwner;
                         if (this.modelOwner == null || tObject == null) return;

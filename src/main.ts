@@ -1,4 +1,3 @@
-import './style.css'
 import CanvasController from "./logic/CanvasController.js";
 import Model from "./logic/Model";
 import CameraModule from "./logic/modules/CameraModule";
@@ -10,14 +9,19 @@ import GeneratedScene from "./gameLogic/GeneratedScene";
 import MapController from "./logic/MapController";
 import Vector2 from "./math/Vector2";
 import DrawImageOnMap from "./gameLogic/map/DrawImageOnMap";
+import PointManager from "./gameLogic/PointManager";
+import InfoCanvasController from "./logic/InfoCanvasController";
 
 
 let canvas = new CanvasController("#mainCanvas");
 let mapCanvas = new MapController({
     elementName: "#mapCanvas",
-    translateMap: new Vector2([-50, 100]),
-    scale: new Vector2([10, 10]),
+    translateMap: new Vector2([-220, 300]),
+    scale: new Vector2([5, 5]),
     isRotate90: true
+});
+let infoCanvas = new InfoCanvasController({
+    elementName: "#infoCanvas"
 });
 let scene = new GeneratedScene({
     canvasController: canvas,
@@ -52,7 +56,7 @@ let flyCam = new FlyingCamera({
 let pointOnMap = new DrawImageOnMap({
     mapController: mapCanvas,
     imageSrc: "pacman.png",
-    size: new Vector2([20,20]),
+    size: new Vector2([10, 10]),
     canRotation: true
 });
 let collider = new CircleXZCollider({radius: 1, whenCollide: flyCam.repairPosition.bind(flyCam)});
@@ -62,4 +66,7 @@ cam.addModule(collider);
 cam.addModule(pointOnMap);
 scene.addModel(cam);
 cameraModule.setAsMainCamera();
-scene.start();
+scene.start(() => {
+    infoCanvas.clear();
+    PointManager.instance.draw(infoCanvas)
+});

@@ -23,9 +23,9 @@ export default class Scene {
         this._models = [];
     }
 
-    public start() {
+    public start(func: ((deltaTime: number) => void)) {
         this.isRunning = true;
-        this.gameLoop();
+        this.gameLoop(func);
         this.lastTime = Date.now();
     }
 
@@ -37,7 +37,7 @@ export default class Scene {
         this._models.push(model);
     }
 
-    public gameLoop() {
+    public gameLoop(func: ((deltaTime: number) => void)) {
         if (!this.isRunning) return;
         let delta = (Date.now() - this.lastTime) / 1000 * this.timeScale;
         this.lastTime = Date.now();
@@ -52,9 +52,9 @@ export default class Scene {
         gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
         if (this._mapController !== null) this._mapController.clear();
         this._models.forEach(m => m.update(delta));
-
+        func(delta);
         InputService.instance.resetMovement();
-        requestAnimationFrame(() => this.gameLoop());
+        requestAnimationFrame(() => this.gameLoop(func));
     }
 
     addMapController(mapController: MapController) {
@@ -79,5 +79,9 @@ export default class Scene {
 
     set mainCamera(value: CameraModule | null) {
         this._mainCamera = value;
+    }
+
+    removeModel(model: Model) {
+        this._models = this._models.filter((m) => m != model);
     }
 }

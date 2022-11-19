@@ -18,7 +18,11 @@ export default class CircleXZCollider extends Colliders {
     protected checkCollision(collider: Colliders): void {
         switch (collider.colliderName) {
             case 'circleXZ':
-                console.error("NOT IMPLEMENTED");
+                if (this.checkCollisionCircleXZ(collider as CircleXZCollider)) {
+                    this._isCollide = true;
+                    this.collisionsObjects.push(collider);
+                    this.whenCollide();
+                }
                 break;
             case 'rectXZ':
                 if ((collider as RectXZCollider).checkCollisionCircleXZ(this)) {
@@ -28,6 +32,16 @@ export default class CircleXZCollider extends Colliders {
                 }
         }
 
+    }
+
+    checkCollisionCircleXZ(collider: CircleXZCollider) {
+        let myOwner = this.modelOwner;
+        let yourOwner = collider.modelOwner;
+        if (myOwner == null || yourOwner == null) return false;
+        let disVec = yourOwner.position.toVec2XZ().sub(myOwner.position.toVec2XZ());
+        let distanceSqt = disVec.lengthSq();
+        let sumRadius = this.radius + collider.radius;
+        return distanceSqt < sumRadius * sumRadius;
     }
 
     get radius(): number {
