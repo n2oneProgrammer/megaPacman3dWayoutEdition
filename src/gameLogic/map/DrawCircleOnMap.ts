@@ -5,22 +5,25 @@ import Color from "../../math/Color";
 export interface IDrawCircleOnMap {
     mapController: MapController,
     radius: number;
+    color?: Color;
 }
 
 export default class DrawCircleOnMap extends Module {
     private mapController: MapController;
-    private radius: number;
+    private readonly radius: number;
+    private readonly color: Color;
 
-    constructor({mapController, radius}: IDrawCircleOnMap) {
+    constructor({mapController, radius, color}: IDrawCircleOnMap) {
         super();
         this.mapController = mapController;
         this.radius = radius;
+        this.color = color || Color.WHITE;
     }
 
     update(_: number): void {
         if (this.modelOwner == null) return;
         let posXZ = this.modelOwner.position.toVec2XZ();
-        this.mapController.drawCircle(posXZ, this.radius, Color.WHITE);
+        this.mapController.drawCircle(posXZ, this.radius, this.color);
     }
 
 }

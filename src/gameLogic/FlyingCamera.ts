@@ -53,8 +53,7 @@ export default class FlyingCamera extends Module {
                         } else {
                             normal = this.modelOwner.position.toVec2XZ().sub(closestPoint).normalize();
                         }
-                        let trans: [number, number] = [0, 0]
-                        console.log(normal);
+                        let trans: [number, number] = [0, 0];
                         if (normal.x != 0) {
                             trans[0] = ((c.radius + t.size.x) - Math.abs(this.modelOwner.position.x - tObject.position.x)) * normal.x;
                         } else if (normal.y != 0) {
@@ -63,7 +62,6 @@ export default class FlyingCamera extends Module {
                         finalTransform = finalTransform.add(new Vector2(trans));
                     });
                     if (this.modelOwner) {
-                        console.log("final", finalTransform);
                         this.modelOwner.position = this.modelOwner.position.add(new Vector3([finalTransform.x, 0, finalTransform.y]));
                     }
                 }

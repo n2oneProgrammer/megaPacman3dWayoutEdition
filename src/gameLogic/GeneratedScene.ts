@@ -10,8 +10,9 @@ import RectXZCollider from "../logic/modules/Colliders/RectXZCollider";
 import Vector2 from "../math/Vector2";
 import MapController from "../logic/MapController";
 import DrawRectOnMap from "./map/DrawRectOnMap";
+import GeneratingPointsModule from "./GeneratingPointsModule";
 
-type maskType = number; // 1 - up, 2 - right, 4 - down, 8 - left
+export type maskType = number; // 1 - up, 2 - right, 4 - down, 8 - left
 
 export interface IMapGenerator {
     canvasController: CanvasController;
@@ -151,7 +152,9 @@ export default class GeneratedScene extends Scene {
                 }
             })
         })
-
-
+        let pointGenerator = new GeneratingPointsModule();
+        pointGenerator.generatePoints(
+            mapMask, this.tileSize, this, this.mapController
+        );
     }
 }

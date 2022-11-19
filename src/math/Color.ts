@@ -67,6 +67,7 @@ export default class Color {
 //static
     static BLACK = new Color([0, 0, 0, 1]);
     static WHITE = new Color([255, 255, 255, 1]);
+    static YELLOW = new Color([255, 255, 0, 1]);
 
     static randomColor(): Color {
         let r = Math.floor(Math.random() * 256);
