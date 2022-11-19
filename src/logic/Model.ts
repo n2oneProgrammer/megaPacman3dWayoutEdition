@@ -9,16 +9,16 @@ export interface IModel {
 }
 
 export default class Model {
-    position: Vector3;
-    rotation: Vector3;
-    scale: Vector3;
+    private _position: Vector3;
+    private _rotation: Vector3;
+    private _scale: Vector3;
     private readonly _modules: Module[];
 
     constructor({position, rotation, scale}: IModel) {
         this._modules = [];
-        this.position = position || Vector3.zero;
-        this.rotation = rotation || Vector3.zero;
-        this.scale = scale || Vector3.one;
+        this._position = position || Vector3.zero;
+        this._rotation = rotation || Vector3.zero;
+        this._scale = scale || Vector3.one;
     }
 
     addModule(module: Module) {
@@ -35,7 +35,31 @@ export default class Model {
         return this._modules;
     }
 
+    get position(): Vector3 {
+        return this._position;
+    }
+
+    set position(value: Vector3) {
+        this._position = value;
+    }
+
+    get rotation(): Vector3 {
+        return this._rotation;
+    }
+
+    set rotation(value: Vector3) {
+        this._rotation = value;
+    }
+
+    get scale(): Vector3 {
+        return this._scale;
+    }
+
+    set scale(value: Vector3) {
+        this._scale = value;
+    }
+
     getQuaternionRotation(): Quaternion {
-        return Quaternion.setFromEuler(this.rotation);
+        return Quaternion.setFromEuler(this._rotation);
     }
 }

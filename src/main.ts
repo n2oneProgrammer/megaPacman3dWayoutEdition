@@ -11,6 +11,8 @@ import Vector2 from "./math/Vector2";
 import DrawImageOnMap from "./gameLogic/map/DrawImageOnMap";
 import PointManager from "./gameLogic/PointManager";
 import InfoCanvasController from "./logic/InfoCanvasController";
+import GhostModel from "./gameLogic/Models/GhostModel";
+import {deg2rad} from "./math/Utils";
 
 
 let canvas = new CanvasController("#mainCanvas");
@@ -66,6 +68,14 @@ cam.addModule(collider);
 cam.addModule(pointOnMap);
 scene.addModel(cam);
 cameraModule.setAsMainCamera();
+scene.addModel(new GhostModel({
+    position: new Vector3([-2, 1.8, 0]),
+    rotation: new Vector3([0, deg2rad(-90), 0]),
+    scale: new Vector3([1, 1, 1]),
+    color: new Color([255, 184, 255, 1]),
+    mapController: mapCanvas,
+    scene: scene
+}))
 scene.start(() => {
     infoCanvas.clear();
     PointManager.instance.draw(infoCanvas)
