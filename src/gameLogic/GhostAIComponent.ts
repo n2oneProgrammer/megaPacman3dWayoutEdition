@@ -6,14 +6,19 @@ import PathFinder from "./PathFinder";
 import GeneratedScene from "./GeneratedScene";
 import Vector3 from "../math/Vector3";
 
+export interface IGhostAIComponent {
+    movementSpeed: number;
+}
+
 export default class GhostAIComponent extends Module {
     private smallTarget: Vector2 | null;
     private prevPosition: Vector2 | null;
     private target: Model | null;
-    private timer: number = 2;
+    private movementSpeed: number;
 
-    constructor() {
+    constructor({movementSpeed}: IGhostAIComponent) {
         super();
+        this.movementSpeed = movementSpeed;
         this.smallTarget = null;
         this.prevPosition = null;
         this.target = Scene.instance.mainCamera?.modelOwner || null;
@@ -23,18 +28,29 @@ export default class GhostAIComponent extends Module {
         if (this.modelOwner == null) return;
         if (this.smallTarget == null) {
             this.findPath();
-        }
-        if (this.timer < 0) {
+            console.log("ZACZYNAM");
             this.prevPosition = new Vector2([this.modelOwner.position.x, this.modelOwner.position.z]);
+        }
+        let moveVector = new Vector3([
+            this.smallTarget?.x || 0,
+            this.modelOwner.position.y,
+            this.smallTarget?.y || 0
+        ]).sub(this.modelOwner.position);
+        this.modelOwner.rotation = new Vector3([
+            this.modelOwner.rotation.x,
+            Math.atan2(moveVector.x, moveVector.z),
+            this.modelOwner.rotation.z
+        ])
+
+        this.modelOwner.position = this.modelOwner.position.add(moveVector.normalize().mul(this.movementSpeed * deltaTime));
+        if (moveVector.lengthSquare() < 0.01) {
             this.modelOwner.position = new Vector3([
                 this.smallTarget?.x || 0,
                 this.modelOwner.position.y,
                 this.smallTarget?.y || 0
             ]);
             this.smallTarget = null;
-            this.timer = 1;
         }
-        this.timer -= deltaTime;
     }
 
     private findPath() {

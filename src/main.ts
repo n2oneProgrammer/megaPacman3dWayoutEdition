@@ -79,7 +79,7 @@ let ghost = new GhostModel({
     mapController: mapCanvas,
     scene: scene
 });
-ghost.addModule(new GhostAIComponent());
+ghost.addModule(new GhostAIComponent({movementSpeed: 5}));
 scene.addModel(ghost)
 
 scene.start(() => {
