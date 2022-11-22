@@ -13,6 +13,7 @@ import PointManager from "./gameLogic/PointManager";
 import InfoCanvasController from "./logic/InfoCanvasController";
 import GhostModel from "./gameLogic/Models/GhostModel";
 import {deg2rad} from "./math/Utils";
+import GhostAIComponent from "./gameLogic/GhostAIComponent";
 
 
 let canvas = new CanvasController("#mainCanvas");
@@ -25,17 +26,18 @@ let mapCanvas = new MapController({
 let infoCanvas = new InfoCanvasController({
     elementName: "#infoCanvas"
 });
+let mapMask = [
+    [0, 4, 2, 8, 4, 4, 4, 4, 2, 8, 4, 0],
+    [2, 9, 4, 0, 5, 1, 1, 5, 0, 4, 3, 8],
+    [0, 0, 5, 2, 13, 4, 4, 7, 8, 5, 0, 0],
+    [2, 12, 1, 0, 5, 5, 5, 5, 0, 1, 6, 8],
+    [0, 1, 2, 8, 1, 1, 1, 1, 2, 8, 1, 0]
+
+]
 let scene = new GeneratedScene({
     canvasController: canvas,
     mapController: mapCanvas,
-    mapMask: [
-        [0, 4, 2, 8, 4, 4, 4, 4, 2, 8, 4, 0],
-        [2, 9, 4, 0, 5, 1, 1, 5, 0, 4, 3, 8],
-        [0, 0, 5, 2, 13, 4, 4, 7, 8, 5, 0, 0],
-        [2, 12, 1, 0, 5, 5, 5, 5, 0, 1, 6, 8],
-        [0, 1, 2, 8, 1, 1, 1, 1, 2, 8, 1, 0]
-
-    ],
+    mapMask: mapMask,
     tileSize: 3,
     wallHeight: 2,
     wallColor: Color.randomColor(),
@@ -68,14 +70,18 @@ cam.addModule(collider);
 cam.addModule(pointOnMap);
 scene.addModel(cam);
 cameraModule.setAsMainCamera();
-scene.addModel(new GhostModel({
-    position: new Vector3([-2, 1.8, 0]),
+let ghostPos = scene.getBoardToPosition(new Vector2([3, 3]))
+let ghost = new GhostModel({
+    position: new Vector3([ghostPos.x, 1.8, ghostPos.y]),
     rotation: new Vector3([0, deg2rad(-90), 0]),
     scale: new Vector3([1, 1, 1]),
     color: new Color([255, 184, 255, 1]),
     mapController: mapCanvas,
     scene: scene
-}))
+});
+ghost.addModule(new GhostAIComponent());
+scene.addModel(ghost)
+
 scene.start(() => {
     infoCanvas.clear();
     PointManager.instance.draw(infoCanvas)

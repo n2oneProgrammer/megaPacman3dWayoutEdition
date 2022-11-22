@@ -37,7 +37,7 @@ export default class GhostModel extends Model {
         if (mapController != null) {
             this.addModule(new DrawCircleOnMap({
                 mapController: mapController,
-                radius: 3,
+                radius: 5,
                 color: color
             }))
         }
