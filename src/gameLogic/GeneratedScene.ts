@@ -29,6 +29,7 @@ export default class GeneratedScene extends Scene {
     private wallHeight: number;
     private wallColor: Color;
     private floorColor: Color;
+    private _level: number = 1;
     private _mapMask: maskType[][];
 
     constructor({
@@ -54,7 +55,11 @@ export default class GeneratedScene extends Scene {
         return this._mapMask;
     }
 
-    private createWall(position: Vector3, color: Color, scale: Vector3) {
+    get level(): number {
+        return this._level;
+    }
+
+    public createWall(position: Vector3, color: Color, scale: Vector3) {
         let obj = new Model({
             position: position,
             rotation: Vector3.zero,
@@ -167,14 +172,12 @@ export default class GeneratedScene extends Scene {
     getPositionOnBoard(pos: Vector2) {
         let x = pos.x / (this.tileSize * 2) + this._mapMask.length / 2 - 0.5;
         let y = pos.y / (this.tileSize * 2) + this._mapMask[0].length / 2 - 0.5;
-        console.log(x, y);
         return new Vector2([x, y]);
     }
 
     getBoardToPosition(pos: Vector2) {
         let x = (pos.x - this.mapMask.length / 2 + 0.5) * this.tileSize * 2;
         let y = (pos.y - this.mapMask[0].length / 2 + 0.5) * this.tileSize * 2
-        console.log(x, y);
         return new Vector2([x, y]);
     }
 }

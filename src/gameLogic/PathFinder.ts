@@ -36,18 +36,36 @@ export default class PathFinder {
         this.pathBoard = [];
         this.mapBoard = mapBoard;
         this.target = target;
-        console.log(mapBoard, positionOnBoard, prevPosition, target)
         this.stepOfFindingPath(positionOnBoard, prevPosition, 0);
-        console.table(this.pathBoard.map(row => row.map(el => el.steps)));
-        console.log(this.nearestElement);
 
         let el = this.nearestElement.element;
         while (el != null && el.prevPos != null && el.steps > 1) {
-            console.log(el.steps, el.prevPos, el.pos);
             el = this.getElementPathBoard(el.prevPos.x, el.prevPos.y)
+        }
+        if (el?.pos.equal(positionOnBoard)) {
+            return this.moveAny(positionOnBoard, prevPosition);
         }
 
         return el?.pos;
+    }
+
+    moveAny(position: Vector2, prevPosition: Vector2) {
+        if (this.mapBoard[position.x] == null) return;
+        let mask = this.mapBoard[position.x][position.y];
+        let moves = []
+        if ((mask & 1) == 0 && prevPosition.x != position.x - 1 && position.x - 1 >= 0) {
+            moves.push(position.add(new Vector2([-1, 0])));
+        }
+        if ((mask & 2) == 0 && prevPosition.y != position.y + 1 && position.y + 1 < this.mapBoard[0].length) {
+            moves.push(position.add(new Vector2([0, 1])));
+        }
+        if ((mask & 4) == 0 && prevPosition.x != position.x + 1 && position.x + 1 < this.mapBoard.length) {
+            moves.push(position.add(new Vector2([1, 0])));
+        }
+        if ((mask & 8) == 0 && prevPosition.y != position.y - 1 && position.y - 1 >= 0) {
+            moves.push(position.add(new Vector2([0, -1])));
+        }
+        return moves[Math.floor(Math.random() * moves.length)];
     }
 
     private stepOfFindingPath(position: Vector2, prevPosition: Vector2, step: number) {

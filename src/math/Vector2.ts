@@ -61,4 +61,8 @@ export default class Vector2 {
     length() {
         return Math.sqrt(this.lengthSq());
     }
+
+    equal(v: Vector2) {
+        return this._x === v._x && this._y === v._y;
+    }
 }
