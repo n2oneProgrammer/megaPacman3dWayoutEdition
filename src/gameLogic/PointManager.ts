@@ -1,6 +1,8 @@
 import Vector2 from "../math/Vector2";
 import Color from "../math/Color";
 import InfoCanvasController from "../logic/InfoCanvasController";
+import Scene from "../logic/Scene";
+import GeneratedScene from "./GeneratedScene";
 
 export default class PointManager {
     private static _instance: PointManager | null = null
@@ -27,7 +29,7 @@ export default class PointManager {
     collectPoint() {
         this.collectedPoints++;
         if (this.collectedPoints >= this.maxPoints) {
-            alert("YOU WIN with score: " + this.score);
+            (Scene.instance as GeneratedScene).winLevel()
         }
     }
 

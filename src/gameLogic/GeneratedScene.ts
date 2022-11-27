@@ -180,4 +180,12 @@ export default class GeneratedScene extends Scene {
         let y = (pos.y - this.mapMask[0].length / 2 + 0.5) * this.tileSize * 2
         return new Vector2([x, y]);
     }
+
+    winLevel() {
+        alert("WIN");
+    }
+
+    loseLevel() {
+        alert("LOSE");
+    }
 }
