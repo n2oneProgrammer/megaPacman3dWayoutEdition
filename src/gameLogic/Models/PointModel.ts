@@ -41,7 +41,6 @@ export default class PointModel extends Model {
                             c.collisionsObjects.forEach((r) => {
                                 if (r == c) return;
                                 if (r.modelOwner != null && r.modelOwner.modules.find((m) => m instanceof FlyingCamera)) {
-                                    console.log("PLAYER");
                                     if (this == null) return;
                                     Scene.instance.removeModel(this);
                                     PointManager.instance.collectPoint();

@@ -30,7 +30,7 @@ let ghosts = [
             } else {
                 v = new Vector3([Math.sign(vec.x), 0, 0]);
             }
-            return modelOwner.position.add(v);
+            return modelOwner.position.add(v.mul(-10));
         },
         scatterTarget: new Vector3([-80, 0, 80])
     },
@@ -39,10 +39,9 @@ let ghosts = [
         chaseCalcFunc: () => {
             let redGhost = GhostManager.instance.ghostsModels[0];
             let pinkyGhost = GhostManager.instance.ghostsModels[1];
-            let targetRed = (redGhost.modules.find(m => m instanceof GhostAIComponent) as GhostAIComponent).target || Vector3.zero;
             let targetPinky = (pinkyGhost.modules.find(m => m instanceof GhostAIComponent) as GhostAIComponent).target || Vector3.zero;
 
-            let v = targetPinky.sub(targetRed);
+            let v = targetPinky.sub(redGhost.position);
             return targetPinky.add(v);
 
         },
@@ -53,7 +52,7 @@ let ghosts = [
         chaseCalcFunc: () => {
             let pos = Scene.instance.mainCamera?.modelOwner?.position || Vector3.zero;
             if (pos.sub(GhostManager.instance.ghostsModels[3].position).lengthSquare() < 16 * 16) {
-                return new Vector3([80, 0, -80])
+                return new Vector3([80, 0, 80])
             }
             return pos;
         },
