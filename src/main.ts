@@ -80,8 +80,11 @@ scene.addModel(cam);
 cameraModule.setAsMainCamera();
 
 GhostManager.instance;
-scene.start(() => {
+let func = () => {
     infoCanvas.clear();
     GhostManager.instance.update();
     PointManager.instance.draw(infoCanvas)
-});
+};
+scene.start(func);
+window.addEventListener("focus", () => scene.start(func))
+window.addEventListener("blur", () => scene.stop())

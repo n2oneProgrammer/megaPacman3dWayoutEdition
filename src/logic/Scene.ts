@@ -24,6 +24,7 @@ export default class Scene {
     }
 
     public start(func: ((deltaTime: number) => void)) {
+        if (this.isRunning) return;
         this.isRunning = true;
         this.lastTime = Date.now();
         this.gameLoop(func);
