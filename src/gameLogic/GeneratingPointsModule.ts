@@ -3,6 +3,8 @@ import Scene from "../logic/Scene";
 import Vector3 from "../math/Vector3";
 import PointModel from "./Models/PointModel";
 import MapController from "../logic/MapController";
+import FoodModel from "./Models/FoodModel";
+import PointManager from "./PointManager";
 
 let noPointsFields = [
     [2, 4],
@@ -11,7 +13,7 @@ let noPointsFields = [
     [2, 7],
 ]
 export default class GeneratingPointsModule {
-    generatePoints(mapMask: maskType[][], tileSize: number, scene: Scene, mapController: MapController | null) {
+    generatePoints(mapMask: maskType[][], tileSize: number, scene: Scene, mapController: MapController | null, countFoods: number) {
         let wallsTab: boolean[][] = [];
         let getWallTab = (x: number, y: number) => {
             if (wallsTab[x] == null || wallsTab[x][y] == null) return false;
@@ -29,7 +31,10 @@ export default class GeneratingPointsModule {
                     return;
                 }
                 let pos = new Vector3([(x - mapMask.length / 2 + 0.5) * tileSize * 2, 2, (z - mapMask[0].length / 2 + 0.5) * tileSize * 2]);
-
+                scene.addModel(new PointModel({
+                    position: pos,
+                    mapController: mapController
+                }))
                 if ((mask & 1) == 0 && !getWallTab(x - 0.5, z) && x - 0.5 > 0) {
                     scene.addModel(new PointModel({
                         position: pos.add(new Vector3([-tileSize, 0, 0])),
@@ -60,5 +65,29 @@ export default class GeneratingPointsModule {
                 }
             })
         })
+        let foods: FoodModel[] = [];
+        for (let i = 0; i < countFoods; i++) {
+            let model = scene.models[Math.floor(Math.random() * scene.models.length)];
+            if (!(model instanceof PointModel) || foods.find(f => model.position.sub(f.position).lengthSquare() < 90) != null) {
+                i--;
+                continue;
+            }
+            let position = model.position;
+            scene.removeModel(model);
+            PointManager.instance.decreasePoints();
+            let food = new FoodModel({
+                position: position,
+                mapController: scene.mapController
+            });
+            foods.push(food)
+            scene.addModel(food)
+        }
+
+        for (let i = 0; i < foods.length; i++) {
+            for (let j = i + 1; j < foods.length; j++) {
+                console.log(i, j, foods[i].position.sub(foods[j].position).lengthSquare());
+            }
+        }
+
     }
 }

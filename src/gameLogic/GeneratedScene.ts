@@ -165,7 +165,7 @@ export default class GeneratedScene extends Scene {
         })
         let pointGenerator = new GeneratingPointsModule();
         pointGenerator.generatePoints(
-            mapMask, this.tileSize, this, this.mapController
+            mapMask, this.tileSize, this, this.mapController, 6
         );
     }
 

@@ -39,4 +39,7 @@ export default class PointManager {
         infoCanvas.drawText("Your score: " + this.score, new Vector2([0, 30]), 30, Color.WHITE);
     }
 
+    decreasePoints() {
+        this.maxPoints--;
+    }
 }
