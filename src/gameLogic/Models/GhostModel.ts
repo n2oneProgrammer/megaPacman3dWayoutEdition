@@ -12,6 +12,8 @@ import CircleXZCollider from "../../logic/modules/Colliders/CircleXZCollider";
 import Colliders from "../../logic/modules/Colliders";
 import FlyingCamera from "../FlyingCamera";
 import GeneratedScene from "../GeneratedScene";
+import GhostManager from "../GhostManager";
+import {GhostState} from "../GhostState";
 
 export interface IGhostModel {
     position: Vector3;
@@ -25,12 +27,16 @@ export interface IGhostModel {
 export default class GhostModel extends Model {
     private eyeLeft!: Model;
     private eyeRight!: Model;
+    private color: Color;
+    enable: boolean = true;
 
     constructor({position, rotation, scale, color, mapController, scene}: IGhostModel) {
         super({
             position, rotation, scale
         });
+        this.color = color;
         this.generateEye(scene);
+
         // this.color = color;
         let ghostRenderer = new RenderModule({
             mesh: ghostMesh,
@@ -48,7 +54,11 @@ export default class GhostModel extends Model {
                                 if (r == c) return;
                                 if (r.modelOwner != null && r.modelOwner.modules.find((m) => m instanceof FlyingCamera)) {
                                     if (this == null) return;
-                                    (Scene.instance as GeneratedScene).loseLevel();
+                                    if (GhostManager.instance.getState() == GhostState.FRIGHTENED) {
+                                        GhostManager.instance.die(this);
+                                    } else {
+                                        (Scene.instance as GeneratedScene).loseLevel();
+                                    }
                                 }
                             })
                         }
@@ -103,4 +113,35 @@ export default class GhostModel extends Model {
     }
 
 
+    change2Frightened() {
+        let renderer = this.modules.find(m => m instanceof RenderModule) as RenderModule;
+        if (renderer != null) {
+            renderer.changeTexture(new OneColorTexture(new Color([0, 0, 255, 1])));
+            renderer.init();
+        }
+        let drawCircleOnMap = this.modules.find(m => m instanceof DrawCircleOnMap) as DrawCircleOnMap;
+        if (drawCircleOnMap != null) {
+            drawCircleOnMap.color = new Color([0, 0, 255, 1]);
+        }
+    }
+
+    change2NormalForm() {
+        let renderer = this.modules.find(m => m instanceof RenderModule) as RenderModule;
+        if (renderer != null) {
+            renderer.changeTexture(new OneColorTexture(this.color));
+            renderer.init();
+        }
+        let drawCircleOnMap = this.modules.find(m => m instanceof DrawCircleOnMap) as DrawCircleOnMap;
+        if (drawCircleOnMap != null) {
+            drawCircleOnMap.color = this.color;
+        }
+    }
+
+    disable() {
+        this.enable = false;
+    }
+
+    activate() {
+        this.enable = true;
+    }
 }

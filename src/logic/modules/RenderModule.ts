@@ -21,7 +21,7 @@ export default class RenderModule extends Module {
     private normal_buffer: WebGLBuffer | null = null;
     private color_buffer: WebGLBuffer | null = null;
     private mesh: Mesh;
-    public texture: Texture;
+    private texture: Texture;
 
     constructor({mesh, texture}: IRenderModule) {
         super(100);
@@ -30,6 +30,17 @@ export default class RenderModule extends Module {
         this.texture.calculatingColor(this.mesh.vertices);
         this.init();
 
+    }
+
+    changeTexture(texture: Texture) {
+        let gl = CanvasController.instance?.canvasCtx;
+        if (!gl) return;
+        this.texture = texture;
+        this.texture.calculatingColor(this.mesh.vertices);
+        // Create and store data into color buffer
+        this.color_buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.color_buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.texture.colorVertices), gl.STATIC_DRAW);
     }
 
     init() {

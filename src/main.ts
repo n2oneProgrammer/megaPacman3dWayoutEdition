@@ -80,9 +80,9 @@ scene.addModel(cam);
 cameraModule.setAsMainCamera();
 
 GhostManager.instance;
-let func = () => {
+let func = (deltaTime: number) => {
     infoCanvas.clear();
-    GhostManager.instance.update();
+    GhostManager.instance.update(deltaTime);
     PointManager.instance.draw(infoCanvas)
 };
 scene.start(func);

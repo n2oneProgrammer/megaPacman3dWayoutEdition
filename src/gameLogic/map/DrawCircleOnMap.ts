@@ -11,19 +11,26 @@ export interface IDrawCircleOnMap {
 export default class DrawCircleOnMap extends Module {
     private mapController: MapController;
     private readonly radius: number;
-    private readonly color: Color;
+    private _color: Color;
 
     constructor({mapController, radius, color}: IDrawCircleOnMap) {
         super();
         this.mapController = mapController;
         this.radius = radius;
-        this.color = color || Color.WHITE;
+        this._color = color || Color.WHITE;
     }
 
     update(_: number): void {
         if (this.modelOwner == null) return;
         let posXZ = this.modelOwner.position.toVec2XZ();
-        this.mapController.drawCircle(posXZ, this.radius, this.color);
+        this.mapController.drawCircle(posXZ, this.radius, this._color);
     }
 
+    get color(): Color {
+        return this._color;
+    }
+
+    set color(value: Color) {
+        this._color = value;
+    }
 }

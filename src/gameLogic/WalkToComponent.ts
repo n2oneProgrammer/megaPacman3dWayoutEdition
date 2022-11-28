@@ -4,68 +4,32 @@ import Scene from "../logic/Scene";
 import PathFinder from "./PathFinder";
 import GeneratedScene from "./GeneratedScene";
 import Vector3 from "../math/Vector3";
-import GhostManager from "./GhostManager";
-import {GhostState} from "./GhostState";
-import GhostModel from "./Models/GhostModel";
 
-export interface IGhostAIComponent {
+export interface IWalkToComponent {
     movementSpeed: number;
-    chaseCalcFunc: () => Vector3;
-    scatterTarget: Vector3;
+    target: Vector3;
+    whenFinish: () => void;
 }
 
-export default class GhostAIComponent extends Module {
+export default class WalkToComponent extends Module {
     private smallTarget: Vector2 | null;
     private prevPosition: Vector2 | null;
-    private _target: Vector3 | null;
+    private readonly _target: Vector3;
     private movementSpeed: number;
-    private chaseCalcFunc: () => Vector3;
-    private scatterTarget: Vector3;
-    private isFrightened: boolean = false;
+    private whenFinish: () => void;
 
-    constructor({movementSpeed, chaseCalcFunc, scatterTarget}: IGhostAIComponent) {
+    constructor({movementSpeed, target, whenFinish}: IWalkToComponent) {
         super();
         this.movementSpeed = movementSpeed;
-        this.chaseCalcFunc = chaseCalcFunc;
-        this.scatterTarget = scatterTarget;
+        this.whenFinish = whenFinish;
+        this._target = target;
+        console.log("TARGET", target)
         this.smallTarget = null;
         this.prevPosition = null;
-        this._target = new Vector3([0, 0, 0]) || null;
-    }
-
-    calcTarget() {
-        let state = GhostManager.instance.getState();
-        // console.log("STATE", state);
-        if (state != GhostState.FRIGHTENED && this.isFrightened) {
-            this.isFrightened = false;
-            (this.modelOwner as GhostModel).change2NormalForm();
-
-        }
-        switch (state) {
-            case GhostState.CHASE:
-                this._target = this.chaseCalcFunc();
-                break;
-            case GhostState.SCATTER:
-                // console.log("SCATTER");
-                this._target = this.scatterTarget;
-                break;
-            case GhostState.FRIGHTENED:
-                if (!this.isFrightened) {
-                    (this.modelOwner as GhostModel).change2Frightened();
-                }
-                this.isFrightened = true;
-                this._target = this.scatterTarget
-                break;
-        }
     }
 
     update(deltaTime: number): void {
         if (this.modelOwner == null) return;
-        if (!(this.modelOwner as GhostModel).enable) {
-            this.smallTarget = null;
-            return;
-        }
-        this.calcTarget();
         if (this.smallTarget == null) {
             this.findPath();
             this.prevPosition = new Vector2([this.modelOwner.position.x, this.modelOwner.position.z]);
@@ -75,6 +39,7 @@ export default class GhostAIComponent extends Module {
             this.modelOwner.position.y,
             this.smallTarget?.y || 0
         ]).sub(this.modelOwner.position);
+
         this.modelOwner.rotation = new Vector3([
             this.modelOwner.rotation.x,
             Math.atan2(moveVector.x, moveVector.z),
@@ -90,11 +55,13 @@ export default class GhostAIComponent extends Module {
             ]);
             this.smallTarget = null;
         }
+        if (this._target.sub(this.modelOwner.position).lengthSquare() < 0.01) {
+            this.whenFinish();
+        }
     }
 
     private findPath() {
         if (this.modelOwner == null) return;
-        if (this._target == null) return;
         if (!(Scene.instance instanceof GeneratedScene)) return;
         let scene = Scene.instance as GeneratedScene;
         let pathFinder = new PathFinder();
@@ -107,15 +74,7 @@ export default class GhostAIComponent extends Module {
             scene.mapMask,
             new Vector2([Math.round(targetOnBoard.x), Math.round(targetOnBoard.y)])
         );
-        // if (newTarget?.equal(positionOnBoard)) {
-        //     let d = positionOnBoard.sub(prevPositionOnBoard);
-        //     newTarget = positionOnBoard.add(d);
-        // }
         this.smallTarget = scene.getBoardToPosition(newTarget || Vector2.zero);
 
-    }
-
-    get target(): Vector3 | null {
-        return this._target;
     }
 }

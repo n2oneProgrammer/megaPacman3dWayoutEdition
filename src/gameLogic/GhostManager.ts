@@ -9,6 +9,8 @@ import GhostModel from "./Models/GhostModel";
 import {deg2rad} from "../math/Utils";
 import GhostAIComponent from "./GhostAIComponent";
 import Quaternion from "../math/Quaternion";
+import DiedGhostModel from "./Models/DiedGhostModel";
+import MapController from "../logic/MapController";
 
 let ghosts = [
     {
@@ -61,11 +63,13 @@ let ghosts = [
 ]
 export default class GhostManager {
     private static _instance: GhostManager | null = null;
-    private startTime: number;
     private spawnPoint: Vector3
     private times: [GhostState, number][] = [];
     private countGhostExist = 0;
+    private eatableGhostTimer = 0;
+    private eatableGhostTime: number = 25;
     private _ghostsModels: GhostModel[] = [];
+    private gameTime: number;
 
     static get instance(): GhostManager {
         if (GhostManager._instance == null) {
@@ -75,7 +79,7 @@ export default class GhostManager {
     }
 
     constructor() {
-        this.startTime = Date.now();
+        this.gameTime = 0;
         let scene = Scene.instance as GeneratedScene;
         let spawn2d = scene.getBoardToPosition(new Vector2([2, 5]));
         this.spawnPoint = new Vector3([spawn2d.x, 1.8, spawn2d.y]);
@@ -83,21 +87,25 @@ export default class GhostManager {
     }
 
     getState(): GhostState {
-        let gameTime = (Date.now() - this.startTime) / 1000;
+        if (this.eatableGhostTimer > 0) {
+            return GhostState.FRIGHTENED;
+        }
+
         for (let i = 0; i < this.times.length; i++) {
-            if (gameTime < this.times[i][1]) {
+            if (this.gameTime < this.times[i][1]) {
                 return this.times[i][0];
             }
         }
         return GhostState.CHASE;
     }
 
-    update() {
+    update(deltaTime: number) {
+        this.gameTime += deltaTime;
+        this.eatableGhostTimer -= deltaTime;
         if (this.countGhostExist >= ghosts.length) {
             return;
         }
-        let gameTime = (Date.now() - this.startTime) / 1000;
-        if (gameTime >= this.countGhostExist * this.times[0][1] / ghosts.length) {
+        if (this.gameTime >= this.countGhostExist * this.times[0][1] / ghosts.length) {
             let ghostData = ghosts[this.countGhostExist];
             this.spawnGhost(ghostData.color, ghostData.chaseCalcFunc, ghostData.scatterTarget);
             this.countGhostExist++;
@@ -140,5 +148,32 @@ export default class GhostManager {
 
     get ghostsModels(): GhostModel[] {
         return this._ghostsModels;
+    }
+
+    activeEatableGhosts() {
+        this.eatableGhostTimer = this.eatableGhostTime;
+    }
+
+    die(ghost: GhostModel) {
+        ghost.disable();
+        let scene = Scene.instance;
+        let tempEyes = new DiedGhostModel({
+            position: ghost.position.copy(),
+            rotation: Vector3.zero,
+            scale: Vector3.one,
+            mapController: scene.mapController as MapController,
+            ghost: ghost,
+            target: this.spawnPoint,
+            movementSpeed: 10,
+            scene: scene as GeneratedScene
+        });
+        scene.addModel(tempEyes);
+        ghost.position = new Vector3([100, 100, 100]);
+    }
+
+    activateGhost(ghost: GhostModel) {
+        ghost.position = this.spawnPoint;
+        ghost.activate();
+
     }
 }

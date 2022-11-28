@@ -11,6 +11,7 @@ import Colliders from "../../logic/modules/Colliders";
 import FlyingCamera from "../FlyingCamera";
 import Scene from "../../logic/Scene";
 import PointManager from "../PointManager";
+import GhostManager from "../GhostManager";
 
 export interface IFoodModel {
     position: Vector3,
@@ -43,6 +44,7 @@ export default class FoodModel extends Model {
                                 if (r.modelOwner != null && r.modelOwner.modules.find((m) => m instanceof FlyingCamera)) {
                                     if (this == null) return;
                                     Scene.instance.removeModel(this);
+                                    GhostManager.instance.activeEatableGhosts();
                                 }
                             })
                         }
