@@ -15,7 +15,7 @@ export class PathfindingField {
 
 export default class PathFinder {
     private pathBoard: PathfindingField[][] = [];
-    private mapBoard: maskType[][] = [];
+    public mapBoard: maskType[][] = [];
     private nearestElement: { distance: number, element: PathfindingField | null } = {
         distance: Infinity,
         element: null
@@ -50,6 +50,7 @@ export default class PathFinder {
     }
 
     moveAny(position: Vector2, prevPosition: Vector2) {
+        console.log("a", this.mapBoard)
         if (this.mapBoard[position.x] == null) return;
         let mask = this.mapBoard[position.x][position.y];
         let moves = []

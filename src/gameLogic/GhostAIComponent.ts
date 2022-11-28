@@ -52,11 +52,27 @@ export default class GhostAIComponent extends Module {
             case GhostState.FRIGHTENED:
                 if (!this.isFrightened) {
                     (this.modelOwner as GhostModel).change2Frightened();
+                    let temp = this.smallTarget;
+                    this.smallTarget = this.prevPosition;
+                    this.prevPosition = temp;
                 }
                 this.isFrightened = true;
-                this._target = this.scatterTarget
+                this._target = this.scatterTarget;
                 break;
         }
+    }
+
+    randomWall() {
+        if (this.modelOwner == null) return;
+        if (!(Scene.instance instanceof GeneratedScene)) return;
+        let scene = Scene.instance as GeneratedScene;
+        let positionOnBoard = scene.getPositionOnBoard(this.modelOwner.position.toVec2XZ());
+        let prevPositionOnBoard = this.prevPosition != null ? scene.getPositionOnBoard(this.prevPosition) : positionOnBoard;
+        let pathFinder = new PathFinder();
+        pathFinder.mapBoard = scene.mapMask;
+        let newTarget = pathFinder.moveAny(positionOnBoard, prevPositionOnBoard);
+        console.log(this.modelOwner.position.toVec2XZ(), positionOnBoard, prevPositionOnBoard, newTarget)
+        this.smallTarget = scene.getBoardToPosition(newTarget || Vector2.zero);
     }
 
     update(deltaTime: number): void {
@@ -65,9 +81,14 @@ export default class GhostAIComponent extends Module {
             this.smallTarget = null;
             return;
         }
+        console.log(this.smallTarget);
         this.calcTarget();
         if (this.smallTarget == null) {
-            this.findPath();
+            if (this.isFrightened) {
+                this.randomWall();
+            } else {
+                this.findPath();
+            }
             this.prevPosition = new Vector2([this.modelOwner.position.x, this.modelOwner.position.z]);
         }
         let moveVector = new Vector3([
