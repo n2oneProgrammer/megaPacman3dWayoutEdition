@@ -96,6 +96,11 @@ export default class GhostAIComponent extends Module {
             this.modelOwner.position.y,
             this.smallTarget?.y || 0
         ]).sub(this.modelOwner.position);
+        console.log(moveVector);
+        if (moveVector.x != 0 && moveVector.z != 0) {
+            this.smallTarget = null;
+            return;
+        }
         this.modelOwner.rotation = new Vector3([
             this.modelOwner.rotation.x,
             Math.atan2(moveVector.x, moveVector.z),
