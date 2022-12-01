@@ -12,6 +12,7 @@ export interface IGhostAIComponent {
     movementSpeed: number;
     chaseCalcFunc: () => Vector3;
     scatterTarget: Vector3;
+    id: number;
 }
 
 export default class GhostAIComponent extends Module {
@@ -22,19 +23,21 @@ export default class GhostAIComponent extends Module {
     private chaseCalcFunc: () => Vector3;
     private scatterTarget: Vector3;
     private isFrightened: boolean = false;
+    private id: number;
 
-    constructor({movementSpeed, chaseCalcFunc, scatterTarget}: IGhostAIComponent) {
+    constructor({movementSpeed, chaseCalcFunc, scatterTarget, id}: IGhostAIComponent) {
         super();
         this.movementSpeed = movementSpeed;
         this.chaseCalcFunc = chaseCalcFunc;
         this.scatterTarget = scatterTarget;
+        this.id = id;
         this.smallTarget = null;
         this.prevPosition = null;
         this._target = new Vector3([0, 0, 0]) || null;
     }
 
     calcTarget() {
-        let state = GhostManager.instance.getState();
+        let state = GhostManager.instance.getState(this.id);
         // console.log("STATE", state);
         if (state != GhostState.FRIGHTENED && this.isFrightened) {
             this.isFrightened = false;
@@ -46,7 +49,6 @@ export default class GhostAIComponent extends Module {
                 this._target = this.chaseCalcFunc();
                 break;
             case GhostState.SCATTER:
-                // console.log("SCATTER");
                 this._target = this.scatterTarget;
                 break;
             case GhostState.FRIGHTENED:
@@ -71,7 +73,6 @@ export default class GhostAIComponent extends Module {
         let pathFinder = new PathFinder();
         pathFinder.mapBoard = scene.mapMask;
         let newTarget = pathFinder.moveAny(positionOnBoard, prevPositionOnBoard);
-        console.log(this.modelOwner.position.toVec2XZ(), positionOnBoard, prevPositionOnBoard, newTarget)
         this.smallTarget = scene.getBoardToPosition(newTarget || Vector2.zero);
     }
 
@@ -81,7 +82,6 @@ export default class GhostAIComponent extends Module {
             this.smallTarget = null;
             return;
         }
-        console.log(this.smallTarget);
         this.calcTarget();
         if (this.smallTarget == null) {
             if (this.isFrightened) {
@@ -96,7 +96,6 @@ export default class GhostAIComponent extends Module {
             this.modelOwner.position.y,
             this.smallTarget?.y || 0
         ]).sub(this.modelOwner.position);
-        console.log(moveVector);
         if (moveVector.x != 0 && moveVector.z != 0) {
             this.smallTarget = null;
             return;

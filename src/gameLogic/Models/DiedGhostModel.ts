@@ -32,7 +32,6 @@ export default class DiedGhostModel extends Model {
     constructor({position, rotation, scale, ghost, target, mapController, scene, movementSpeed}: IDiedGhostModel) {
         let p = scene.getPositionOnBoard(position.toVec2XZ())
         let pos = scene.getBoardToPosition(new Vector2([Math.round(p.x), Math.round(p.y)]))
-        console.log(pos);
         super({
             position: new Vector3([pos.x, position.y, pos.y]), rotation, scale
         });

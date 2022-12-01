@@ -22,6 +22,7 @@ export interface IGhostModel {
     mapController: MapController;
     color: Color;
     scene: Scene;
+    id: number
 }
 
 export default class GhostModel extends Model {
@@ -29,12 +30,14 @@ export default class GhostModel extends Model {
     private eyeRight!: Model;
     private color: Color;
     enable: boolean = true;
+    private _id: number;
 
-    constructor({position, rotation, scale, color, mapController, scene}: IGhostModel) {
+    constructor({position, rotation, scale, color, mapController, scene, id}: IGhostModel) {
         super({
             position, rotation, scale
         });
         this.color = color;
+        this._id = id;
         this.generateEye(scene);
 
         // this.color = color;
@@ -54,7 +57,7 @@ export default class GhostModel extends Model {
                                 if (r == c) return;
                                 if (r.modelOwner != null && r.modelOwner.modules.find((m) => m instanceof FlyingCamera)) {
                                     if (this == null) return;
-                                    if (GhostManager.instance.getState() == GhostState.FRIGHTENED) {
+                                    if (GhostManager.instance.getState(this._id) == GhostState.FRIGHTENED) {
                                         GhostManager.instance.die(this);
                                     } else {
                                         (Scene.instance as GeneratedScene).loseLevel();
@@ -143,5 +146,9 @@ export default class GhostModel extends Model {
 
     activate() {
         this.enable = true;
+    }
+
+    get id(): number {
+        return this._id;
     }
 }

@@ -68,6 +68,7 @@ export default class GhostManager {
     private countGhostExist = 0;
     private eatableGhostTimer = 0;
     private eatableGhostTime: number = 25;
+    private eatableGhosts: boolean[] = [false, false, false, false];
     private _ghostsModels: GhostModel[] = [];
     private gameTime: number;
 
@@ -86,8 +87,8 @@ export default class GhostManager {
         this.loadTimes((Scene.instance as GeneratedScene).level);
     }
 
-    getState(): GhostState {
-        if (this.eatableGhostTimer > 0) {
+    getState(id: number): GhostState {
+        if (this.eatableGhostTimer > 0 && this.eatableGhosts[id]) {
             return GhostState.FRIGHTENED;
         }
 
@@ -107,12 +108,13 @@ export default class GhostManager {
         }
         if (this.gameTime >= this.countGhostExist * this.times[0][1] / ghosts.length) {
             let ghostData = ghosts[this.countGhostExist];
-            this.spawnGhost(ghostData.color, ghostData.chaseCalcFunc, ghostData.scatterTarget);
+            this.eatableGhosts[this.countGhostExist] = false;
+            this.spawnGhost(ghostData.color, ghostData.chaseCalcFunc, ghostData.scatterTarget, this.countGhostExist);
             this.countGhostExist++;
         }
     }
 
-    spawnGhost(color: Color, chaseCalcFunc: () => Vector3, scatterTarget: Vector3) {
+    spawnGhost(color: Color, chaseCalcFunc: () => Vector3, scatterTarget: Vector3, id: number) {
         let scene = Scene.instance as GeneratedScene;
         let ghost = new GhostModel({
             position: this.spawnPoint,
@@ -120,12 +122,14 @@ export default class GhostManager {
             scale: new Vector3([1, 1, 1]),
             color: color,
             mapController: scene.mapController!,
-            scene: scene
+            scene: scene,
+            id: id
         });
         ghost.addModule(new GhostAIComponent({
             movementSpeed: 5,
             chaseCalcFunc: chaseCalcFunc,
-            scatterTarget: scatterTarget
+            scatterTarget: scatterTarget,
+            id: id
         }));
         scene.addModel(ghost)
         this._ghostsModels.push(ghost);
@@ -152,6 +156,7 @@ export default class GhostManager {
 
     activeEatableGhosts() {
         this.eatableGhostTimer = this.eatableGhostTime;
+        this.eatableGhosts = [true, true, true, true];
     }
 
     die(ghost: GhostModel) {
@@ -173,6 +178,7 @@ export default class GhostManager {
 
     activateGhost(ghost: GhostModel) {
         ghost.position = this.spawnPoint;
+        this.eatableGhosts[ghost.id] = false;
         ghost.activate();
 
     }

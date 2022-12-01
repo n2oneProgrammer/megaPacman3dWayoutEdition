@@ -28,6 +28,7 @@ main {
 }
 
 #mainCanvasDiv {
+    position: relative;
     flex: 1;
     height: 100%;
 }
@@ -65,3 +66,14 @@ main {
     margin-left: auto;
 }
 
+#mainCanvasDiv p {
+    display: block;
+    position: absolute;
+    bottom: 10%;
+    right: 0;
+    width: 90%;
+    text-align: center;
+    font-size: 30px;
+    color: white;
+    font-weight: 900;
+}
