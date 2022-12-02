@@ -6,7 +6,7 @@ import GeneratedScene from "./GeneratedScene";
 
 export default class PointManager {
     private static _instance: PointManager | null = null
-    private score: number;
+    private _score: number;
     private maxPoints: number;
     private collectedPoints: number;
 
@@ -19,7 +19,7 @@ export default class PointManager {
         PointManager._instance = this;
         this.maxPoints = 0;
         this.collectedPoints = 0;
-        this.score = -200;
+        this._score = -200;
     }
 
     increaseMaxPoints() {
@@ -34,14 +34,18 @@ export default class PointManager {
     }
 
     addScore(score: number) {
-        this.score += score;
+        this._score += score;
     }
 
     draw(infoCanvas: InfoCanvasController) {
-        infoCanvas.drawText("Your score: " + this.score, new Vector2([0, 30]), 30, Color.WHITE);
+        infoCanvas.drawText("Your score: " + this._score, new Vector2([0, 30]), 30, Color.WHITE);
     }
 
     decreasePoints() {
         this.maxPoints--;
+    }
+
+    get score(): number {
+        return this._score;
     }
 }

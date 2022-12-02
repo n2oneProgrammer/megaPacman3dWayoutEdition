@@ -11,6 +11,7 @@ import Vector2 from "../math/Vector2";
 import MapController from "../logic/MapController";
 import DrawRectOnMap from "./map/DrawRectOnMap";
 import GeneratingPointsModule from "./GeneratingPointsModule";
+import Game from "./GameStages/Game";
 
 export type maskType = number; // 1 - up, 2 - right, 4 - down, 8 - left
 
@@ -186,6 +187,6 @@ export default class GeneratedScene extends Scene {
     }
 
     loseLevel() {
-        alert("LOSE");
+        Game.instance.lose();
     }
 }

@@ -22,6 +22,7 @@ export interface IGame {
 }
 
 export default class Game {
+    public static instance: Game;
     private mapCanvas: MapController;
     private canvas: CanvasController;
     private infoCanvas: InfoCanvasController;
@@ -32,6 +33,7 @@ export default class Game {
     };
 
     constructor({canvas, mapCanvas, infoCanvas}: IGame) {
+        Game.instance = this;
         this.canvas = canvas;
         this.mapCanvas = mapCanvas;
         this.infoCanvas = infoCanvas;
@@ -106,10 +108,9 @@ export default class Game {
             if (event.key === " ") {
                 document.getElementById("PlayStartInfo")!.style.display = "none";
                 this.startGame();
-                window.addEventListener("focus", this.signatureFocus)
-                window.addEventListener("blur", this.signatureBlur)
             }
-        })
+        });
+
 
     }
 
@@ -121,12 +122,25 @@ export default class Game {
 
     startGame() {
         this.scene.start(this.update.bind(this));
+        window.addEventListener("focus", this.signatureFocus)
+        window.addEventListener("blur", this.signatureBlur)
     }
 
     update(deltaTime: number) {
         this.infoCanvas.clear();
         GhostManager.instance.update(deltaTime);
         PointManager.instance.draw(this.infoCanvas)
+    }
+
+    lose() {
+        this.scene.stop();
+        this.remove();
+        setTimeout(() => {
+            this.infoCanvas.clear();
+            this.infoCanvas.drawText("You got caught by a ghost", new Vector2([10, 50]), 30, Color.WHITE);
+            this.infoCanvas.drawText("Your Score " + PointManager.instance.score, new Vector2([10, 100]), 30, Color.WHITE);
+        }, 100)
+
     }
 
     onBlur() {
