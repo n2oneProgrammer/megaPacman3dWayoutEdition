@@ -14,6 +14,8 @@ import MapController from "../../logic/MapController";
 import InfoCanvasController from "../../logic/InfoCanvasController";
 import InputService from "../../logic/services/InputService";
 import {EventType} from "../../logic/enum/EventType";
+import LevelDrawer from "../LevelDrawer";
+import Colliders from "../../logic/modules/Colliders";
 
 export interface IGame {
     canvas: CanvasController;
@@ -39,7 +41,9 @@ export default class Game {
         this.infoCanvas = infoCanvas;
     }
 
-    initGame() {
+    loadGame(level: number) {
+        PointManager.instance.restart();
+        InputService.instance.restart();
         let mapMask = [
             [0, 4, 2, 8, 4, 4, 4, 4, 2, 8, 4, 0],
             [2, 9, 4, 0, 5, 1, 1, 5, 0, 4, 3, 8],
@@ -52,6 +56,7 @@ export default class Game {
             canvasController: this.canvas,
             mapController: this.mapCanvas,
             mapMask: mapMask,
+            level: level,
             tileSize: 3,
             wallHeight: 2,
             wallColor: Color.randomColor(),
@@ -94,11 +99,14 @@ export default class Game {
         cam.addModule(pointOnMap);
         this.scene.addModel(cam);
         cameraModule.setAsMainCamera();
+        GhostManager.instance.reload();
+    }
 
-        GhostManager.instance;
-        this.signatureFocus = this.onFocus.bind(this)
-        this.signatureBlur = this.onBlur.bind(this)
-        this.startGame();
+    initGame(level: number) {
+        this.loadGame(level);
+        this.signatureFocus = this.onFocus.bind(this);
+        this.signatureBlur = this.onBlur.bind(this);
+        this.scene.start(this.update.bind(this));
         setTimeout(() => {
             this.generateRightPanel();
             this.scene.stop()
@@ -110,8 +118,6 @@ export default class Game {
                 this.startGame();
             }
         });
-
-
     }
 
     generateRightPanel() {
@@ -129,7 +135,17 @@ export default class Game {
     update(deltaTime: number) {
         this.infoCanvas.clear();
         GhostManager.instance.update(deltaTime);
-        PointManager.instance.draw(this.infoCanvas)
+        PointManager.instance.draw(this.infoCanvas);
+        LevelDrawer(this.infoCanvas, new Vector2([5, 80]), this.scene.level);
+    }
+
+    nextLevel() {
+        let level = this.scene.level;
+        this.scene.models = [];
+        Colliders.colliders = [];
+        this.remove();
+        this.loadGame(level + 1)
+        this.scene.start(this.update.bind(this));
     }
 
     lose() {

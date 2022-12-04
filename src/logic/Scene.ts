@@ -70,6 +70,11 @@ export default class Scene {
         return this._models;
     }
 
+
+    set models(value: Model[]) {
+        this._models = value;
+    }
+
     get mapController(): MapController | null {
         return this._mapController;
     }

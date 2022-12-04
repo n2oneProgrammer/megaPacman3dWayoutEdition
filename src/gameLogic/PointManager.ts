@@ -16,7 +16,6 @@ export default class PointManager {
     }
 
     constructor() {
-        PointManager._instance = this;
         this.maxPoints = 0;
         this.collectedPoints = 0;
         this._score = -200;
@@ -47,5 +46,12 @@ export default class PointManager {
 
     get score(): number {
         return this._score;
+    }
+
+    restart() {
+        this.maxPoints = 0;
+        this._score = -200;
+        this.collectedPoints = 0;
+        PointManager._instance = null;
     }
 }

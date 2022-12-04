@@ -83,11 +83,5 @@ export default class GeneratingPointsModule {
             scene.addModel(food)
         }
 
-        for (let i = 0; i < foods.length; i++) {
-            for (let j = i + 1; j < foods.length; j++) {
-                console.log(i, j, foods[i].position.sub(foods[j].position).lengthSquare());
-            }
-        }
-
     }
 }

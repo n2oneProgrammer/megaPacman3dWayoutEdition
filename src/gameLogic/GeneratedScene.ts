@@ -23,6 +23,7 @@ export interface IMapGenerator {
     wallHeight?: number;
     wallColor: Color;
     floorColor: Color;
+    level: number;
 }
 
 export default class GeneratedScene extends Scene {
@@ -40,7 +41,8 @@ export default class GeneratedScene extends Scene {
                     tileSize,
                     wallHeight,
                     wallColor,
-                    floorColor
+                    floorColor,
+                    level
                 }: IMapGenerator) {
         super(canvasController);
         this.addMapController(mapController);
@@ -49,6 +51,7 @@ export default class GeneratedScene extends Scene {
         this.wallColor = wallColor;
         this.floorColor = floorColor;
         this._mapMask = mapMask;
+        this._level = level
         this.generateMap(mapMask);
     }
 
@@ -183,7 +186,7 @@ export default class GeneratedScene extends Scene {
     }
 
     winLevel() {
-        alert("WIN");
+        Game.instance.nextLevel();
     }
 
     loseLevel() {

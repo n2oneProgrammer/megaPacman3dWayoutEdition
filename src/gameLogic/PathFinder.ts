@@ -50,7 +50,6 @@ export default class PathFinder {
     }
 
     moveAny(position: Vector2, prevPosition: Vector2) {
-        console.log("a", this.mapBoard)
         if (this.mapBoard[position.x] == null) return;
         let mask = this.mapBoard[position.x][position.y];
         let moves = []

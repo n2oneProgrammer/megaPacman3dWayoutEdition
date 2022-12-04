@@ -35,6 +35,7 @@ export default class InputService {
     }
 
     resetMovement() {
+        console.log("RESET");
         this.mouseMoment = new Vector2([0, 0]);
     }
 
@@ -42,6 +43,7 @@ export default class InputService {
         let x = event.x - this.canvas.getBoundingClientRect().x;
         let y = event.y - this.canvas.getBoundingClientRect().y;
         this.mousePosition = new Vector2([x, y]);
+        console.log(event);
         this.mouseMoment = new Vector2([event.movementX, event.movementY]);
         this.runEvent(EventType.MOUSE_MOVE, event);
     }
@@ -90,6 +92,7 @@ export default class InputService {
     }
 
     public getMouseMoment(): Vector2 {
+        console.log(this.mouseMoment);
         return this.mouseMoment;
     }
 
@@ -122,5 +125,9 @@ export default class InputService {
             this._instance = new InputService();
         }
         return this._instance;
+    }
+
+    restart() {
+        InputService._instance = null;
     }
 }

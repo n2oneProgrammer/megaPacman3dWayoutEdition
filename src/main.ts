@@ -18,4 +18,4 @@ let infoCanvas = new InfoCanvasController({
 let game = new Game({
     canvas, mapCanvas, infoCanvas
 });
-game.initGame();
+game.initGame(1);

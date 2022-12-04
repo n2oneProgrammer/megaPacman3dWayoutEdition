@@ -182,4 +182,19 @@ export default class GhostManager {
         ghost.activate();
 
     }
+
+    reload() {
+        GhostManager._instance = null;
+        this.times = [];
+        this.countGhostExist = 0;
+        this.eatableGhostTimer = 0;
+        this.eatableGhostTime = 25;
+        this.eatableGhosts = [false, false, false, false];
+        this._ghostsModels = [];
+        this.gameTime = 0;
+        let scene = Scene.instance as GeneratedScene;
+        let spawn2d = scene.getBoardToPosition(new Vector2([2, 5]));
+        this.spawnPoint = new Vector3([spawn2d.x, 1.8, spawn2d.y]);
+        GhostManager._instance = new GhostManager();
+    }
 }
