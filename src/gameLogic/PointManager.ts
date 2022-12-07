@@ -48,6 +48,10 @@ export default class PointManager {
         return this._score;
     }
 
+    set score(value: number) {
+        this._score = value;
+    }
+
     restart() {
         this.maxPoints = 0;
         this._score = -200;

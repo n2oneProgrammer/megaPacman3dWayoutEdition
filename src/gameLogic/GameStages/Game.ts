@@ -143,9 +143,24 @@ export default class Game {
         let level = this.scene.level;
         this.scene.models = [];
         Colliders.colliders = [];
+        let score = PointManager.instance.score;
         this.remove();
-        this.loadGame(level + 1)
-        this.scene.start(this.update.bind(this));
+        if (level + 1 > 20) {
+            setTimeout(() => {
+                this.infoCanvas.clear();
+                this.infoCanvas.drawText("You win the game", new Vector2([10, 50]), 30, Color.WHITE);
+                this.infoCanvas.drawText("Congratulations", new Vector2([10, 100]), 30, Color.WHITE);
+                this.infoCanvas.drawText("Your Score " + PointManager.instance.score, new Vector2([10, 150]), 30, Color.WHITE);
+            }, 100)
+        }
+        setTimeout(() => {
+            this.infoCanvas.drawText("Level Up", new Vector2([10, 150]), 30, Color.WHITE);
+        }, 100)
+        setTimeout(() => {
+            this.loadGame(level + 1)
+            PointManager.instance.score = score - 200;
+            this.scene.start(this.update.bind(this));
+        }, 3000)
     }
 
     lose() {
