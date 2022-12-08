@@ -45,6 +45,7 @@ export default class FoodModel extends Model {
                                     if (this == null) return;
                                     Scene.instance.removeModel(this);
                                     PointManager.instance.collectPoint();
+                                    PointManager.instance.addScore(10);
                                     GhostManager.instance.activeEatableGhosts();
                                 }
                             })

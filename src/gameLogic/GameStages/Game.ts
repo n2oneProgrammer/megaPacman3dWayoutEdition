@@ -174,7 +174,7 @@ export default class Game {
         }, 100)
         setTimeout(() => {
             this.loadGame(level + 1)
-            PointManager.instance.score = score - 200;
+            PointManager.instance.score = score - 10;
             SoundManager.instance.play("./sound/chomp2.wav");
             this.scene.start(this.update.bind(this));
         }, 3000)
