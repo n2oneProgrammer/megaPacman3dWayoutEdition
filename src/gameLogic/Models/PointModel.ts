@@ -42,9 +42,12 @@ export default class PointModel extends Model {
                                 if (r == c) return;
                                 if (r.modelOwner != null && r.modelOwner.modules.find((m) => m instanceof FlyingCamera)) {
                                     if (this == null) return;
-                                    PointManager.instance.collectPoint();
+// @ts-ignore
+                                    document.count++;
+                                    console.log("collect point");
                                     Scene.instance.removeModel(this);
-                                    PointManager.instance.addScore(200);
+                                    PointManager.instance.collectPoint();
+                                    PointManager.instance.addScore(10);
                                 }
                             })
                         }

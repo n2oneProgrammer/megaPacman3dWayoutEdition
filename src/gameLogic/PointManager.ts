@@ -3,6 +3,8 @@ import Color from "../math/Color";
 import InfoCanvasController from "../logic/InfoCanvasController";
 import Scene from "../logic/Scene";
 import GeneratedScene from "./GeneratedScene";
+import PointModel from "./Models/PointModel";
+import FoodModel from "./Models/FoodModel";
 
 export default class PointManager {
     private static _instance: PointManager | null = null
@@ -27,7 +29,8 @@ export default class PointManager {
 
     collectPoint() {
         this.collectedPoints++;
-        if (this.collectedPoints >= this.maxPoints) {
+        console.log(this.collectedPoints, this.maxPoints);
+        if (!Scene.instance.models.some(m => m instanceof PointModel || m instanceof FoodModel)) {
             (Scene.instance as GeneratedScene).winLevel()
         }
     }

@@ -16,6 +16,7 @@ import InputService from "../../logic/services/InputService";
 import {EventType} from "../../logic/enum/EventType";
 import LevelDrawer from "../LevelDrawer";
 import Colliders from "../../logic/modules/Colliders";
+import SoundManager from "../../logic/SoundManager";
 
 export interface IGame {
     canvas: CanvasController;
@@ -33,12 +34,20 @@ export default class Game {
     };
     private signatureBlur: OmitThisParameter<() => void> = () => {
     };
+    private firstClick: boolean;
+    private firstStart: boolean = false;
 
     constructor({canvas, mapCanvas, infoCanvas}: IGame) {
         Game.instance = this;
         this.canvas = canvas;
         this.mapCanvas = mapCanvas;
         this.infoCanvas = infoCanvas;
+        this.firstClick = false;
+        InputService.instance.registerEvent(EventType.MOUSE_CLICK, () => {
+            if (this.firstClick) return;
+            this.firstClick = true;
+            SoundManager.instance.play("./sound/pacman_beginning.wav", true);
+        })
     }
 
     loadGame(level: number) {
@@ -59,17 +68,17 @@ export default class Game {
             level: level,
             tileSize: 3,
             wallHeight: 2,
-            wallColor: Color.randomColor(),
-            floorColor: Color.randomColor()
+            wallColor: new Color([14, 138, 245, 255]),
+            floorColor: Color.BLACK
         });
         this.scene.createWall(
             new Vector3([-3, 0.5 + 1, 3]),
-            Color.randomColor(),
+            new Color([7, 69, 122, 255]),
             new Vector3([0.25, 2, 3])
         )
         this.scene.createWall(
             new Vector3([-3, 0.5 + 1, -3]),
-            Color.randomColor(),
+            new Color([7, 69, 122, 255]),
             new Vector3([0.25, 2, 3])
         )
 // let scene = new Scene(canvas);
@@ -114,7 +123,10 @@ export default class Game {
         InputService.instance.registerEvent(EventType.KEYBOARD_CLICK, (e: Event) => {
             let event = e as KeyboardEvent;
             if (event.key === " ") {
+                if (this.firstStart) return;
+                this.firstStart = true;
                 document.getElementById("PlayStartInfo")!.style.display = "none";
+                SoundManager.instance.play("./sound/pacman_chomp2.wav", true);
                 this.startGame();
             }
         });
@@ -147,18 +159,23 @@ export default class Game {
         this.remove();
         if (level + 1 > 20) {
             setTimeout(() => {
+                SoundManager.instance.play("./sound/pacman_beginning.wav");
                 this.infoCanvas.clear();
                 this.infoCanvas.drawText("You win the game", new Vector2([10, 50]), 30, Color.WHITE);
                 this.infoCanvas.drawText("Congratulations", new Vector2([10, 100]), 30, Color.WHITE);
                 this.infoCanvas.drawText("Your Score " + PointManager.instance.score, new Vector2([10, 150]), 30, Color.WHITE);
             }, 100)
+
+            return
         }
         setTimeout(() => {
+            SoundManager.instance.play("./sound/pacman_intermission.wav");
             this.infoCanvas.drawText("Level Up", new Vector2([10, 150]), 30, Color.WHITE);
         }, 100)
         setTimeout(() => {
             this.loadGame(level + 1)
             PointManager.instance.score = score - 200;
+            SoundManager.instance.play("./sound/chomp2.wav");
             this.scene.start(this.update.bind(this));
         }, 3000)
     }
@@ -168,6 +185,7 @@ export default class Game {
         this.remove();
         setTimeout(() => {
             this.infoCanvas.clear();
+            SoundManager.instance.play("./sound/pacman_death.wav");
             this.infoCanvas.drawText("You got caught by a ghost", new Vector2([10, 50]), 30, Color.WHITE);
             this.infoCanvas.drawText("Your Score " + PointManager.instance.score, new Vector2([10, 100]), 30, Color.WHITE);
         }, 100)

@@ -40,6 +40,8 @@ export default class Scene {
 
     public gameLoop(func: ((deltaTime: number) => void)) {
         if (!this.isRunning) return;
+        // @ts-ignore
+        document.count = 0;
         let delta = (Date.now() - this.lastTime) / 1000 * this.timeScale;
         this.lastTime = Date.now();
         let gl = this.canvasController.canvasCtx;
@@ -55,6 +57,9 @@ export default class Scene {
         this._models.forEach(m => m.update(delta));
         func(delta);
         InputService.instance.resetMovement();
+        // @ts-ignore
+        console.log("ILE ", document.count);
+
         requestAnimationFrame(() => this.gameLoop(func));
     }
 

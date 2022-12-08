@@ -11,6 +11,8 @@ import GhostAIComponent from "./GhostAIComponent";
 import Quaternion from "../math/Quaternion";
 import DiedGhostModel from "./Models/DiedGhostModel";
 import MapController from "../logic/MapController";
+import SoundManager from "../logic/SoundManager";
+import PointManager from "./PointManager";
 
 let ghosts = [
     {
@@ -161,6 +163,10 @@ export default class GhostManager {
 
     die(ghost: GhostModel) {
         ghost.disable();
+        PointManager.instance.addScore(200);
+        SoundManager.instance.play("./sound/pacman_eatghost.wav");
+        setTimeout(() =>
+            SoundManager.instance.play("./sound/pacman_chomp2.wav"), 300)
         let scene = Scene.instance;
         let tempEyes = new DiedGhostModel({
             position: ghost.position.copy(),
