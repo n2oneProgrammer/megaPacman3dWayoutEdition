@@ -69,7 +69,7 @@ export default class GhostManager {
     private times: [GhostState, number][] = [];
     private countGhostExist = 0;
     private eatableGhostTimer = 0;
-    private eatableGhostTime: number = 25;
+    private eatableGhostTime: number = 8;
     private eatableGhosts: boolean[] = [false, false, false, false];
     private _ghostsModels: GhostModel[] = [];
     private gameTime: number;

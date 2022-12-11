@@ -49,20 +49,26 @@ export default class PathFinder {
         return el?.pos;
     }
 
+    private isDeprecatedMove(x: number, y: number) {
+        return x === 2 && [
+            y >= 4 && y <= 7
+        ]
+    }
+
     moveAny(position: Vector2, prevPosition: Vector2) {
         if (this.mapBoard[position.x] == null) return;
         let mask = this.mapBoard[position.x][position.y];
         let moves = []
-        if ((mask & 1) == 0 && prevPosition.x != position.x - 1 && position.x - 1 >= 0) {
+        if ((mask & 1) == 0 && prevPosition.x != position.x - 1 && position.x - 1 >= 0 && !this.isDeprecatedMove(position.x - 1, position.y)) {
             moves.push(position.add(new Vector2([-1, 0])));
         }
-        if ((mask & 2) == 0 && prevPosition.y != position.y + 1 && position.y + 1 < this.mapBoard[0].length) {
+        if ((mask & 2) == 0 && prevPosition.y != position.y + 1 && position.y + 1 < this.mapBoard[0].length && !this.isDeprecatedMove(position.x, position.y + 1)) {
             moves.push(position.add(new Vector2([0, 1])));
         }
-        if ((mask & 4) == 0 && prevPosition.x != position.x + 1 && position.x + 1 < this.mapBoard.length) {
+        if ((mask & 4) == 0 && prevPosition.x != position.x + 1 && position.x + 1 < this.mapBoard.length && !this.isDeprecatedMove(position.x + 1, position.y)) {
             moves.push(position.add(new Vector2([1, 0])));
         }
-        if ((mask & 8) == 0 && prevPosition.y != position.y - 1 && position.y - 1 >= 0) {
+        if ((mask & 8) == 0 && prevPosition.y != position.y - 1 && position.y - 1 >= 0 && !this.isDeprecatedMove(position.x, position.y - 1)) {
             moves.push(position.add(new Vector2([0, -1])));
         }
         return moves[Math.floor(Math.random() * moves.length)];

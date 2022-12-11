@@ -57,7 +57,7 @@ export default class PointManager {
 
     restart() {
         this.maxPoints = 0;
-        this._score = -200;
+        this._score = 0;
         this.collectedPoints = 0;
         PointManager._instance = null;
     }
