@@ -20,7 +20,7 @@ export default class PointManager {
     constructor() {
         this.maxPoints = 0;
         this.collectedPoints = 0;
-        this._score = -10;
+        this._score = 0;
     }
 
     increaseMaxPoints() {

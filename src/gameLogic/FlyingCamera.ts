@@ -39,6 +39,7 @@ export default class FlyingCamera extends Module {
                         let t = r as RectXZCollider;
                         let tObject = t.modelOwner;
                         if (this.modelOwner == null || tObject == null) return;
+
                         let min = tObject.position.toVec2XZ().sub(t.size);
                         let max = tObject.position.toVec2XZ().add(t.size);
                         let closestPointTab: [number, number] = [this.modelOwner.position.x, this.modelOwner.position.z];
@@ -46,7 +47,9 @@ export default class FlyingCamera extends Module {
                         closestPointTab[1] = closestPointTab[1] < min.y ? min.y : closestPointTab[1];
                         closestPointTab[0] = closestPointTab[0] > max.x ? max.x : closestPointTab[0];
                         closestPointTab[1] = closestPointTab[1] > max.y ? max.y : closestPointTab[1];
+
                         let closestPoint = new Vector2(closestPointTab);
+
                         let distanceSq = closestPoint.sub(this.modelOwner.position.toVec2XZ()).lengthSq();
                         let normal;
                         if (distanceSq == 0) {
@@ -54,6 +57,7 @@ export default class FlyingCamera extends Module {
                         } else {
                             normal = this.modelOwner.position.toVec2XZ().sub(closestPoint).normalize();
                         }
+                        
                         let trans: [number, number] = [0, 0];
                         if (normal.x != 0) {
                             trans[0] = ((c.radius + t.size.x) - Math.abs(this.modelOwner.position.x - tObject.position.x)) * normal.x;

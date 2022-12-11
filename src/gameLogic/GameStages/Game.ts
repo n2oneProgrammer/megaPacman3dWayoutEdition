@@ -15,8 +15,8 @@ import InfoCanvasController from "../../logic/InfoCanvasController";
 import InputService from "../../logic/services/InputService";
 import {EventType} from "../../logic/enum/EventType";
 import LevelDrawer from "../LevelDrawer";
-import Colliders from "../../logic/modules/Colliders";
 import SoundManager from "../../logic/SoundManager";
+import Colliders from "../../logic/modules/Colliders";
 
 export interface IGame {
     canvas: CanvasController;
@@ -93,7 +93,7 @@ export default class Game {
         });
         let flyCam = new FlyingCamera({
             movementSpeed: 5,
-            sensitivity: 5
+            sensitivity: 2
         });
         let pointOnMap = new DrawImageOnMap({
             mapController: this.mapCanvas,
@@ -115,11 +115,9 @@ export default class Game {
         this.loadGame(level);
         this.signatureFocus = this.onFocus.bind(this);
         this.signatureBlur = this.onBlur.bind(this);
-        this.scene.start(this.update.bind(this));
-        setTimeout(() => {
-            this.generateRightPanel();
-            this.scene.stop()
-        }, 100);
+        this.scene.stop();
+        this.scene.oneFrame(0.0001, this.update.bind(this));
+        this.generateRightPanel();
         InputService.instance.registerEvent(EventType.KEYBOARD_CLICK, (e: Event) => {
             let event = e as KeyboardEvent;
             if (event.key === " ") {
@@ -153,19 +151,21 @@ export default class Game {
 
     nextLevel() {
         let level = this.scene.level;
-        this.scene.models = [];
-        Colliders.colliders = [];
+        this.resetScene();
         let score = PointManager.instance.score;
-        this.remove();
         if (level + 1 > 20) {
             setTimeout(() => {
                 SoundManager.instance.play("./sound/pacman_beginning.wav");
                 this.infoCanvas.clear();
                 this.infoCanvas.drawText("You win the game", new Vector2([10, 50]), 30, Color.WHITE);
                 this.infoCanvas.drawText("Congratulations", new Vector2([10, 100]), 30, Color.WHITE);
-                this.infoCanvas.drawText("Your Score " + PointManager.instance.score, new Vector2([10, 150]), 30, Color.WHITE);
+                this.infoCanvas.drawText("Your Score " + score, new Vector2([10, 150]), 30, Color.WHITE);
+                this.firstStart = false;
+                document.getElementById("PlayStartInfo")!.style.display = "block";
+                document.getElementById("PlayStartInfo")!.innerText = "Press Space to restart game";
+                this.resetScene();
+                this.loadGame(1)
             }, 100)
-
             return
         }
         setTimeout(() => {
@@ -174,7 +174,7 @@ export default class Game {
         }, 100)
         setTimeout(() => {
             this.loadGame(level + 1)
-            PointManager.instance.score = score - 10;
+            PointManager.instance.score = score;
             SoundManager.instance.play("./sound/chomp2.wav");
             this.scene.start(this.update.bind(this));
         }, 3000)
@@ -188,8 +188,19 @@ export default class Game {
             SoundManager.instance.play("./sound/pacman_death.wav");
             this.infoCanvas.drawText("You got caught by a ghost", new Vector2([10, 50]), 30, Color.WHITE);
             this.infoCanvas.drawText("Your Score " + PointManager.instance.score, new Vector2([10, 100]), 30, Color.WHITE);
+            this.firstStart = false;
+            document.getElementById("PlayStartInfo")!.style.display = "block";
+            document.getElementById("PlayStartInfo")!.innerText = "Press Space to restart game";
+            this.resetScene();
+            this.loadGame(1)
         }, 100)
 
+    }
+
+    resetScene() {
+        this.scene.models = [];
+        Colliders.colliders = [];
+        this.remove();
     }
 
     onBlur() {

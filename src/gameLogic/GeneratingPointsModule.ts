@@ -82,6 +82,10 @@ export default class GeneratingPointsModule {
             foods.push(food)
             scene.addModel(food)
         }
-
+        scene.models.forEach(m => {
+            if (m instanceof PointModel && m.position.x === 6 && m.position.z === 0) {
+                scene.removeModel(m);
+            }
+        })
     }
 }
