@@ -3,7 +3,7 @@
 
 It is a Pacman game with Atari Wayout 3d system. 
 
-It is deploy [here](https://n2oneprogrammer.github.io/megaPacman3dWayoutEdition/)
+It is deployed [here](https://n2oneprogrammer.github.io/megaPacman3dWayoutEdition/)
 
 
 
